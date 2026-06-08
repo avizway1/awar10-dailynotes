@@ -1,0 +1,118 @@
+
+
+https://aws.amazon.com/free
+
+Free Plan : You wont get charged untill unless you upgrade your aws acocunt to paid plan. 
+AWS Provides 200$ credits (100$ when account got created.. allocates 5 tasks, Every task gives us 20$)
+Validity : 6 Months
+Credits : 200$
+Limitation : We should use only the services aws allows, by default. 
+
+
+Paid Plan : We get 200$ credits, and we are allowed to use free and paid services. You need to pay for the paid services only.
+Credits : 200$ (6 Months)
+
+----------
+
+Root user email address : Full Access on AWS Account.. He can do account management (i.e; closure, transfer, payment method change).. 
+
+
+Email Address : avizway@gmail.com 
+Account Name : aviz-wtc-uat
+Confirm the code and set strong password
+
+SDLC Process : Software Development Life Cycle : 
+POC : Proof of concept : Sandbox / Training / POC Account
+Dev / Development : Developers start works here when project is ready.
+QA / Testing : Developers developed application tests here.
+UAT / Pre-prod : Similar to production environment.. 
+PROD / Production : Delivering application to end user/customer.. 
+
+Account Type : Personal (or) business/Professional : Personal
+Payment Verification : 2 INR will deduct, and refund back to us.
+Identity : aadhar / PAN Card : Make sure to provide same name as existed in your identity proof.
+Phone Verification : 
+
+
+----------------
+
+Support Plans : Helps us to get assistance from AWS. 
+1. Account and billing related queries : Activation, Service activation, Billing info.. Free for everyone.
+2. Technical Assistance : Depends on support plan. 
+
+
+Basic Support Plan : Free
+--> Included for every account automatically.
+--> 24/7 access to aws documentaiton and AWS Re:Post, AI First troubleshooting agent, Amazon Q, Amazon kiro-cli
+--> Account and billing related, 24/7 support via "web / Phone / Chat"
+--> No Technical support from AWS Engineers / backend team.
+--> Limited Trusted advisor checks.
+
+Business Support Plan : Starts from 29$/Month
+--> AWS Recommended Minimum plan for production workload.
+--> AI powered 24/7 support
+--> 24/7 phone/chat/email contatct method with aws support engineers. 
+--> Critical Case Response : < 30 Min
+--> Full Trusted advisor checks.
+--> unlimited support cases, Any user can create (IAM / Root)
+
+
+Enterprise Support Plan : Starts from $5000/Month
+--> Recommended plan for production critical workload. 
+--> Designated TAM (Technical Account Manager) - Personal AWS Expert
+--> Critical Case Response : < 15 Min
+--> Annual architectural reviews and operational reviews along with well architeture framework review
+--> Full Trusted advisor checks.
+--> unlimited support cases, Any user can create (IAM / Root)
+--> Multi Account support (We can use one support plan for 1000s account also)
+
+Unified Operations : From $50,000/Month
+--> Recommended if you have mission-critical workload that requres enhanced resilience and application specific experts from AWS.
+--> Everything from "Enterprise Support Plan"
+--> Critical response : < 5 minutes
+--> TAM + Domain Specialist + Incident management
+
+
+Case Severity : 
+general guidance : < 24 Hrs
+System Impaired : < 12 hrs
+Production systame Impaired : < 4 hrs
+Production System Down : < 1 Hr
+Business Critical system down : < 15 Min
+Mission critical Business system down : < 5 Min
+
+-----
+
+99.999999999 % Durabulity --> 0.000000001 --> Replicate
+
+-----------------
+
+
+aws global infrastructure: 
+
+Region : No technical defination for the word called region. Its just a physical location or geographic locayion. : 39 Geographic Regions.. 
+
+AZs / Availability Zones : 123 Availability Zones as of June 2026. Every region has atleast 2 AZs.. 
+
+DCs: location where we place lot of servers and it needs physoical security, cooling system.. 
+
+Latency : Time to get response from the server for a roundtrip. 
+TTL : Time to live : 
+
+It is recommended to pick the region near to end customers geo pgrahial location. 
+
+CDN (Content Delivery Network) / Edge Locations / Cloudfront : 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
