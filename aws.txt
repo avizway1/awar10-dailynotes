@@ -87,7 +87,6 @@ Mission critical Business system down : < 5 Min
 
 -----------------
 
-
 aws global infrastructure: 
 
 Region : No technical defination for the word called region. Its just a physical location or geographic locayion. : 39 Geographic Regions.. 
@@ -149,8 +148,72 @@ https://828477980115.signin.aws.amazon.com/console
 Account Alias : avizway8
 Username : s3admin
 
+=============================
+
+D: 11/06/2026
+
+Authentication : who are you.? : username and Password
+
+Authorization : what you can do.? : Permissions
 
 
+
+Every IAM user will have 2 types of Accesses: 
+
+1. Management console access : Browser.. Username & Password.. 
+2. Programatic Access : 
+
+UserCase : I need an IAM user, who has access on S3 and Ec2 Service. 
+
+UserCase : I need an IAM user, who has access on  iam, s3, ec2, rds, vpc, cognito, apigateway, lambda, dynamodb, cloudwatch.. + 
+
+UseCase : I need an IAM user, who has access to all the AWS services.. But not on S3 Service.. 
+
+
+3 Types of Policies: 
+
+1. AWS managed Policies - Job Function : AWS PRepared based on standard jobs we have in market.
+2. AWS Managed Policies : AWS Preapred based on the service. 
+3. Customer Managed : Policy created by customer based on his own requirements.. 
+
+*We cannot edit/delete "aws managed policies". 
+
+E : Effect : allow/deny
+A : Actions : (servicename:ActionName) : s3:* / s3:PutObject / s3:GetObject
+R : Resource : * / (arn:aws:s3:::avinash-11062026)
+
+ARN : Amazon Resource Name : arn:aws:s3:::avinash-11062026
+
+Customer managed policy has character limit: 6,144 characters.. 
+
+===========
+
+Usecase 3 : I need an IAM user, who has access to all the AWS services.. But not on S3 Service.. 
+
+Create an IAM user, Add "AdministratorAccess" 
+Create a Policy "Deny"
+
+E : Deny
+A : s3:*
+R : *
+
+You allow 100 times at any level (user, group, resource), But defined "Deny" at any level.. : DENY will take effect.. 
+
+https://checkip.amazonaws.com/
+
+
+----
+
+IAM Inline
+IAM Permissions Boundary
+IAM User activity tracking
+IAM Credntials Report
+IAM Access Analyser
+IAM prog access Overview 
+
+EC2 
+IAM Roles
+IAM Programatic Access deep Dive
 
 
 
