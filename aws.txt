@@ -157,7 +157,6 @@ Authentication : who are you.? : username and Password
 Authorization : what you can do.? : Permissions
 
 
-
 Every IAM user will have 2 types of Accesses: 
 
 1. Management console access : Browser.. Username & Password.. 
@@ -202,18 +201,57 @@ You allow 100 times at any level (user, group, resource), But defined "Deny" at 
 https://checkip.amazonaws.com/
 
 
+====================================
+
+D: 12/06/2026
+
+--> Inline Policy : 
+
+--> Inlined/allighed to one particular entity, we can use when we hit "max attached policy limit" or max character limtis with customer managed policies. 
+--> We need a policy only for one particular user/role (entity). No requirement of resusability. 
+--> Inline policies are hard to track. 
+
+------
+
+Permissions boundary : We can setup max permissions for a user, even if we have addded more permisisons than he deserved, permissions boundary will limit his activities.
+
+Guardrail = Permisisons Boundary is guardrail for IAM users, We can define max permisisons an IAM user / role to aquire. 
+
+------
+
+IAM User activity tracking : 
+--> We have an AWS service named, "cloudtrail".. THis service enabled by defaut, in all aws accounts. It stores last 90 days activities.. 
+
+We can filter the logs using "username", "readonly : true/false", "EventName", "eventsource"... We can filter using alsolute time and realtive time range.. 
+
+** Region specific services (ec2, s3, rds, vpc) logs stores in specific regions..
+** Global services (iam, cloudfront) logs stores in "N.Virginia".. 
+
 ----
 
-IAM Inline
-IAM Permissions Boundary
-IAM User activity tracking
-IAM Credntials Report
-IAM Access Analyser
-IAM prog access Overview 
+IAM Credntials Report : 
+As part of  AWS housekeeping activies, we need to investigate user creation, user last login, user mfa status.. 
 
-EC2 
-IAM Roles
-IAM Programatic Access deep Dive
+----
+
+IAM Access Analyser : 
+As part of  AWS housekeeping activies, we need to investigate what are the resources shared with other aws accounts i.e; server backup, s3 bucket, db backups.. 
+
+External access findings : Identify resources shared with an external entity.
+Internal access findings : Identify internal IAM users and roles that can access specific resources
+Unused access findings : Identify IAM users and roles with unused access
+
+----
+
+
+
+
+
+
+
+
+
+
 
 
 
