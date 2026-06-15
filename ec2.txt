@@ -6,6 +6,9 @@ Server = Instance = Azure VM = GCP Compute Engine = Virtual Machine
 CAPEX : 
 OPEX : 
 
+EC2 Supports Only "Server Class OS".
+Server Class : RHEL, Ubuntu, Windows server  2025, Suse
+Client Class : Windows 10, windows 11, ubuntu desktop : Use AWS Workspace service
 
 
 1). On-Demand Instances : Pay per second (pay as you go).. No long term commitment with AWS.. 
@@ -50,16 +53,112 @@ Temp batch job, Rendering, Batch jobs, Easily recoverable jobs, Interruptable jo
 Price Not Increased, "YOU TERMINATED" instance, You chaged for 5 Hours 55 minutes
 Price Increased, "AWS TERMINATED" instance, You chaged for 5 Hours only..  (We dont get charged for partial hours)
 
-
 EC2 --> Region Specific
 
+=================================
+
+D: 15/06/2026
+
+How to launch Windows EC2 Instance and how to connect.?
+
+OS
+RAM
+Processor / CPU
+Harddisk (ssd/hdd)
 
 
+t3.micro
+t4g.large
+
+t --> family
+3 --> generation (Higher generation = better performance with better pricing)
+micro --> Size of Instance i.e; cpu, Memory/RAM (nano, micro, medium, small, large, xlarge, 12xlarge)
+
+i --> intel Processor
+a --> amd processor
+g --> Graviton processor
 
 
+General Purpose 	: Balanced CPU + Memory + Network 		: T / M
+Compute Optimised 	: More CPU powered Instance 			: C
+Memory Optimised 	: Lots of RAM - Data lives in Memory	: R, U, X, Z
+Storage Optimised 	: High IOPS / High Throughpur storage	: I, D, H 
+Accelerated Computing : GPU Supported Hardware				: P, G, Trn
+High-performance Computing : High-performance Computing		: hpc
+
+SDLC : 
+Dev / QA : Slightly lower config : t4g.large, t4g.medium, m5.large
+
+UAT / Prod : We always matches prod config in UAT env also.. : 
+--> m5.large, r5.xlarge, c7i.large
+
+==========================
+
+Step 1 : Add Tags (Name, Project, ClientID, POC-Point of Contact, Cost Center, OS/Paltform)
+Name = MyServer
+Project = project X
+ClientID = AAZAA
+POC - Point of Contact = Avinash
+Cost Center = AAZAA
+OS/Paltform = Windows / Linux
+
+Step 2 : Choose AMI (Amazon Machiene Image) : Selecting a pre-installed and configured OS.. : Microsoft Windows Server 2025 Base
+
+Step 3 : Choose the Instance Type : 
+
+t3.micro
+t3.small
+c7i-flex.large	--> Choose this
+m7i-flex.large
+
+Step 4 : Choose / Create a KeyPair
+
+Keypair : Combination of Public and Private Key
+Public Key = Lock						--> AWS keeps it, Automatically stores inside ec2 instance (AWS)
+Private Key = Key to open the lock		--> Downlaods to our laptop automatically (YOU)
+
+Windows os : We can use this for password retrival (.pem)
+Linux os : use key directly and connect (.pem and .ppk)
+
+--> One Keypair can be used with multiple instances. 
 
 
+Step 5 : Network Configuration
 
+Firewall / Security Groups : A security group is a set of firewall rules that control the traffic for your instance. Add rules to allow specific traffic to reach your instance.
+
+Ports : 0 - 65535
+
+windows : RDP : Remote Desktop protocol : 3389
+Linux : SSH : Secure Shell : 22
+web : http : 80
+secure web : https : 443
+DNS : 53
+Mysql : 3306
+mssql : 1433
+Postgresql : 5432
+ftp : 20 & 21
+
+From where you want to connect: 
+1. Anywhere  (0.0.0.0/0 :::/0)
+2. Custom
+3. MyIP (Picks currently connected network IP)
+
+
+Step 6 : Choose storage.. Go with Default 
+Windows: 30 gb
+Linux : 8 gb / 10 gb
+
+-----
+
+To connect to windows instance, we need to have supported tool
+
+1. windows os : Inbuild remote desktop tool 
+
+search --> "remote desktop" --> open app and Provide instance Public IP, Username, password.. popup "yes"..
+open run (win + r) --> type "mstsc" --> Click enter --> Provide instance Public IP, Username, password.. popup "yes"..
+
+2. mac os : windows app 
 
 
 
