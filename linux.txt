@@ -89,10 +89,137 @@ mv v* videos/
 mv <old-name> <new-name>	: Rename old to new name
 
 
+===================
+
+D: 18/06/2026
+
+Launch Templates: We can configure settings that we use to launch an ec2 instance and create it as tempate, we can use template to launch instance multiple times. 
+
+rm : remove / delete
+
+touch a{1..5}.txt
+
+rm a*						--> Deleted all the 5 files created using above comamnd.
+
+rmdir <folder>				--> Works only with empty directories.
+
+rm -r <folder>				--> Recursively delete the folder.
+
+rm -rf <folder>				--> Recursively and forcefully delete the directory. (Be Cautious)
+
+rm songs/*					--> Delete all the files inside a directory
+
+-----------
+
+cat			: helps to view the content of a file.
+
+more		: Displays the content page by page, Useful for long text files (enter - next line & space bar - Next page)
 
 
+head 				: Displays the first/top 10 lines of the file.
+
+head -n 3 passwd	: Diplays only top 3 lines
+
+tail 				: Displays the bottom/last 10 lines of the file.
+
+tail -n 3 passwd	: Displays only bottom 3 lines
+
+sort passwd			: Sort the file content based on alphabetic order
+
+sort -r passwd		: Reverse sorting
+
+----
+
+grep : Global Regular expression Print : helpful command to search text within files.. 
+
+grep "word" filename			: Word is case sensitive here
+
+grep -i "word" filename			: Word is case in-sensitive here
+
+grep "word" file1.txt file2.txt	: Search in multiple files
+
+grep -r "word" /path			: Search for the given word inside a directory. 
+
+ps aux | grep "ec2-user"
+
+----
+
+vim : VI Improved editor : 
+
+Text dirors: vi, vim and nano
 
 
+Command Mode : This mode is for navigation, deletion and other file operations.
+Insert Mode : Used for entering text into the file. 
+
+To switch modes:
+
+command mode --> Insert mode --> press "i"
+Insert mode --> command mode --> Press "esc"
+
+To save and quit: 
+:wq
+
+Ignore the changes and quit: 
+:q!
+
+o		: Open a new line below the current line and enters the insert mode.
+
+k		: Move cursor one line up
+j		: Move cursor one line down
+
+dd		: Delete the entire line where our cursor is placed.
+
+4dd		: Delete the next 4 lines from the cursor
+100dd	: Delete the next 100 lines from the cursor
+
+:set number		: Sets the line number
+: set nonumber	: removes the line number
+
+nG		: Move cursor to a specific line (n = number)
+10G		: Move cursor to 10th line
+
+:undolist		: show change history
+3u				: It undo last 3 chnages
+
+====
+
+echo hello
+echotest.txt
+
+>  : It overwrites existing info and stores only new info
+>> : It appends new output to existing info
+
+echo "hello from Avinash" >> newecho.txt
+echo "hello from Anudeep" >> newecho.txt
+echo "hello from Aravind" >> newecho.txt
+echo "hello from Vikas" >> newecho.txt
+
+ll >> output.txt
+
+echo "hello from Avinash"
+
+echo -e "hello\nfrom\nAvinash"
+
+---
+
+export NAME=avinash
+export AGE=36
+
+#!/bin/bash
+echo "Hello from $NAME"
+echo "My age is $AGE"
+echo "today is $(date)"
+
+
+add variables perm: 
+
+vim ~/.bashrc
+
+export NAME=avinash
+export AGE=36
+
+source ~/.bashrc
 
 
 
