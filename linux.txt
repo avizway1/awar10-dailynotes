@@ -295,7 +295,100 @@ sudo init 0		--> Shutdown
 
 apache configuration path : /etc/httpd/conf/httpd.conf
 
+=========================
 
+D: 20/06/2026
+
+top			: Show realtime view of all the runnin gprocesses
+htop		: Same as top but with better UP (sudo dnf install htop -y)
+
+
+top 
+--> Press "P" to sory processes by CPU Usage
+--> Press "M" to sort by Memory usage
+--> q to quit
+
+sleep 10	: uses terminal in interactive way and take our os into sleep mode for 10 sec
+sleep 10 &	: sleep detached from terminal and runs in backend.
+
+ps 			: Shows list of processes attached to the terminal
+
+ps aux		: a (all users), u (user.owner), x (not attached to terminal)
+
+ps aux | grep sleep
+ps aux | grep httpd
+
+To kill a process we can use "kill" command.
+
+kill <pid>	: SIGTERM - Signal 15.. 
+SIGTERM (15): Termination. The default signal sent by the kill command to ask a process to save its state and shut down safely
+
+kill -9 <pid> : SIGKILL - Signal 9.. 
+SIGKILL (9): Kill. Forces immediate termination. Cannot be ignored, blocked, or caught by the target application.
+
+pstree		: Shows the process tree in hierarchical manner. 
+
+pidof httpd		: To identify the process id
+pgrep httpd		: TO identify the process id
+pkill <p-name>	: Kill a process using name
+pkill sleep
+
+----------
+
+ps aux --sort=-%cpu | head 				--> Find processes using most CPU
+ps aux --sort=-%mem | head 
+
+
+free			: Show the free memory
+free -h			: shows the memory in human readable format
+free -m			: shows memory in Mb
+watch -n 5 free -h
+
+=====================
+
+User Management in Linux OS
+
+
+/etc/passwd				--> User Details
+/etc/shadow				--> Encrypted passwords
+/etc/groups				--> Group details
+/etc/sudoers			--> Sudo permissions applied using this file (cant edit directly)
+
+who / w					--> Shows us, who actually logged into the system currently.
+
+id <user-name>			--> Displays user id, if user already exists
+
+
+sudo useradd avinash		
+sudo useradd -m avinash		--> Explicitly passing argument to create a home directory
+
+sudo passwd avinash			--> Command to setup password for the user
+
+whoami						--> ec2-user
+su avinash					--> Switching to avinash user from current user.
+whoami						--> avinash
+
+sudo useradd -c "created for demo" avinash
+
+root users id is always : 0
+ec2-user : 1000
+avinash : 1001
+
+sudo userdel avinash		--> Delete the user avinash, but this keep the user's home directory
+sudo userdel -r avinash		--> Delete user and his home directory
+
+sudo usermod -L avinash		--> Lock/Disable user
+sudo usermod -U avinash		--> UnLock/Enable user
+
+
+sudo groupadd developers					--> creates a group
+sudo usermod -aG developers avinash			--> Add avinash to developers group
+sudo groupdel developers					--> Delete the group
+sudo passwd -d avinash developers			--> Remove avinash user from group
+
+getent group developers						--> Shows the group members
+
+sudo usermod -aG wheel avinash				--> Adding avinash user to wheel group, so avinash can use sudo permissions.
 
 
 
