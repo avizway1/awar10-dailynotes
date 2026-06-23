@@ -514,7 +514,139 @@ EOF
 
 =========================
 
+D: 23/06/2026
 
+
+Private IP : Unique with in the network. Works only within the network.
+Public IP : Unique across the globe. Works over the internet.
+
+ifconfig		--> Shows the network interfaces and Associated IPs
+
+ip addr			--> Shows the network interfaces and Associated IPs
+
+ip -br addr		--> Shows instance private IP
+
+hostname -I
+
+curl https://checkip.amazonaws.com/			--> Shows the instance public ip
+curl ifconfig.me
+
+
+IMDS should be in running state: 
+curl http://169.254.169.254/latest/meta-data/public-ipv4	--> Shows the instance public ip
+
+curl http://169.254.169.254/latest/meta-data/local-ipv4		--> shows the instance private ip
+
+----
+
+wget https://www.google.com
+curl -O https://www.google.com
+
+------
+
+ping google.com
+ping <server-ip>	--> THis pongs the server for reachability check / latency check.
+
+ping -c 5 google.com
+
+--> To ping and to get response from an Ec2 instance, we need to open ICMP "echo request" and "echo reply" need to be added at security group's inbound rules. 
+
+-----
+
+We can use hostnamectl to adjust the ec2 instance hostname
+
+sudo hostnamectl set-hostname mywebserver
+
+--> DNS Configuration files in Linux OS:
+
+cat /etc/resolv.conf
+cat /etc/hosts
+
+----
+
+CHECK PORT STATUS: 
+
+***
+ss -tulnp
+sudo lsof -i :80
+***
+
+
+netstat (Network Statistics)
+ss (Socket Statistics)
+
+ss
+
+ss -s			--> Summerise all socker stats
+ss -tulnp		--> Shows currently listening ports with program names
+sudo ss -tulnp	--> Shows currently listening ports with program names
+
+ss -t state established
+
+sudo lsof -i :80
+sudo lsof -i :22
+
+----
+
+telnet : Helpful tool to verify port status, servcie status in a remote server.. 
+
+windows : Enable "telnet client" in your laptop.  (settings, programs --> addl features --> telnet client)
+
+sudo dnf install telnet -y
+
+telnet 13.127.183.185 80
+
+---
+
+alternative to "telnet" 
+
+openssl s_client -connect host:port
+openssl s_client -connect google.com:443
+
+=====================
+
+"tee" command in linux os: 
+
+ls -l | tee output.txt			--> Shows the output in terminal and also, saves the output to the file.
+ls -s | tee -a output.txt		--> same as above command but this appends the info. (add to existing info)
+
+echo "hello" | sudo tee /etc/test.conf		--> Sudo comamnd works with tee command, not with echo (> >>)
+
+ls | tee file1.txt file2.txt				--> Sends the output to multiple files at a time
+
+
+====================
+
+sudo dnf install zip unzip -y
+
+zip <zip.name> <file1 file2 file3>
+zip myfile12.zip test1.txt test2.txt	--> zip multiple files only
+zip myfiles.zip *						--> Zip the entire files from current location
+zip entiredir.zip songs/				--> Zip the entire directory
+zip -e secure.zip test1.txt test2.txt	--> password protected zip
+
+
+unzip myfile12.zip									--> unzip in current directory
+unzip myfiles.zip -d /home/ec2-user/testextract 	--> unzip to a specific directory
+unzip -l myfiles.zip								--> shows files without unzip
+unzip secure.zip									--> Asks for password
+
+------
+
+Tar (Tape Archieve)
+
+tar -cvzf mybackup.tar.gz test1.txt test2.txt
+
+c - create
+v - verbose
+z - compress
+f - filename
+
+tar -xzvf mybackup.tar.gz									--> untar in current location
+tar -xzvf mybackup.tar.gz -C /home/ec2-user/testextract		--> untar to specific location
+tar -tzvf mybackup.tar.gz									--> view files without untar
+
+=========================
 
 
 
