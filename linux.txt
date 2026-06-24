@@ -648,6 +648,149 @@ tar -tzvf mybackup.tar.gz									--> view files without untar
 
 =========================
 
+D: 24/06/2026
+
+find : this cvomamnd helps to search yhe files and directories based on name, type, date and size.
+
+sudo find / -name test1.txt				--> Search everyehre in linux os for test1.txt file
+
+sudo find / -iname Test1.txt			--> Search everyehre in linux os for test1.txt - case insensitive
+
+sudo find . -name test1.txt				--> Search in current location
+
+sudo find /var/log -name "*.log"		--> search for all .log file in /var/log directory
+
+sudo find /var/log -name "error*"		--> search for any file/dir name starts with "error"
+
+-type f		--> file
+-type d 	--> Directory
+
+
+sudo find /home -type f -name "*.txt"
+
+sudo find / -type d -name "logs"
+
+sudo find / -type f -empty				--> identifies empty files
+
+sudo find / -type d -empty				--> identifies empty directories
+
+sudo find / -type f -size +200M			--> Search for morethan 200 mb files
+
+sudo find / -type f -size 5M			--> search for exactly 5M files
+
+sudo find / -type f -mtime -7			--> File modified in the last 7 days
+
+sudo find / -type f -atime -7			--> File accessed in the last 7 days
+
+find / -type f -mtime +7 -delete		--> Dont try, Identifies and deletes the files morethan 7 days older
+
+sudo find / -type f -name httpd.conf
+
+-----------
+
+
+sed : stream Editor : this command helps us to find and replace the text/delete the text without opening the file.
+
+cat <<EOF > fruits.txt
+apple
+banana
+mango
+grapes
+banana shake
+oranges
+apple juice apple slice
+EOF
+
+sed 's/apple/kiwi/' fruits.txt			--> Replace the first occurance on each line "apple --> kiwi"
+sed 's/apple/kiwi/g' fruits.txt			--> Replace all occurance on each line "apple --> kiwi"
+
+sed -i 's/apple/kiwi/g' fruits.txt	
+
+sed '/mango/a dragon'  fruits.txt		--> Adds a new line after mango with dragon
+
+sed '/mango/i dragon'  fruits.txt		--> Adds a new line before mango with dragon
+
+------------
+
+copy files from your local laptop to ec2 instance.
+
+windows laptop --> windows instance ==> Map local drive (or) Copy and paste
+windows laptop --> Linux Instance 	==> Install "winscp" and connect to instance then copy data.
+mac os laptop --> windows instance 	==> Copy and paste the files
+mac os laptop --> EC2 Linux instance 	==> use SCP
+ec2 linux --> EC2 Linux Instance	==> use SCP (keypair..?? Password..??)
+
+
+----
+
+SCP : Secure COpy : This command helps us to trasfer file between 2 linux machienes.
+
+From Local to instance with keypair: 
+scp -i awar10-lnx-kp.pem ec2.txt ec2-user@52.66.198.60:/home/ec2-user
+
+From Local to instance with Password: 
+scp -r ./new/ ec2-user@52.66.198.60:/home/ec2-user
+
+From Instance to local with Password: 
+scp ec2-user@52.66.198.60:/home/ec2-user/fruits.txt ./
+
+----
+
+Local Copy			: rsync -av /src/ /dest/
+
+From Local to instance with Password using rsync command: 
+rsync -avz jenkins-kp.pem ec2-user@52.66.198.60:/home/ec2-user/
+
+From Local to instance with keypair using rync command: 
+rsync -avzP -e "ssh -i awar10-lnx-kp.pem" local.txt ec2-user@52.66.198.60:/home/ec2-user/
+
+---
+
+s5cmd is for trasfering large data to s3, then you can copy to desired ec2 instance.. 
+
+---
+
+cronjob:
+
+
+*		: All values
+,		: Multiple values
+-		: Range
+/		: Step value
+
+
+mon,fri
+mon-fri
+*
+
+*		--> every minute
+*/5		--> For every 5 minutes
+
+
+sudo dnf install cronie -y
+
+sudo systemctl enable crond
+sudo systemctl start crond
+sudo systemctl status crond
+
+crontab -e			--> Create a job for userlevel
+crontab -l			--> lists the cron jobs
+
+----
+
+for system level cron jobs: /etc/crontab
+
+Add jobs at this file for system level jobs.
+
+@reboot : run when system rebooted
+@daily : Daily exactly at 12 am : 0 0 * * *
+
+
+
+
+
+
+
 
 
 
