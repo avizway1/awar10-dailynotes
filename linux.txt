@@ -786,6 +786,172 @@ Add jobs at this file for system level jobs.
 @daily : Daily exactly at 12 am : 0 0 * * *
 
 
+========================================
+
+D: 25/06/2026
+
+HDD : Hard Disk Drive : Mechanical Drive : uses spinning magnetic platters and a moving read and write head.
+
+SDD : Solid State Drive : The Flash Drive : Data is going to store in micro chips.. i.e; USB
+
+IOPS : Input and output Operations per Second.. 
+--> HDD : 75 - 500 IOPS
+--> SSD : 50k - 10L IOPS
+
+Throughput : Data Trasfer Rate : MB/S , GbPS..
+
+Throughpout = (IOPS x Data Block Size - KB) / 1024
+
+10,000 x 4 / 1024 = 39.06 MB/s
+
+
+lsblk -o NAME,PHY-SEC
+
+cat /sys/block/nvme0n1/queue/physical_block_size
+
+sudo fdisk -l
+
+
+EBS : Elastic Block Store : 
+
+General Purpose SSD : Boot volume, general purpose workloads..  
+Provisioned IOPS SSD : High performance
+Throughout Optimised HDD : 
+Cold HDD : 
+Standard / magnetic : outdated..
+
+
+
+Root volume : will run OS for our ec2 instance..
+
+SSD 		: gp2, gp3, io1, io2
+HDD			: sc1, st1
+Magnetic	: Standard
+
+root volume : gp2, gp3, io1,io2 & standard
+Addl Volume : gp2, gp3, io1,io2 & standard.. St1 and sc1.. 
+
+---
+
+gp2 and gp3 : general purpose SSD : We can use this type for most common workloads.. 
+
+gp2 : Min 1 Gb, Max 16 TB.. (for 1 gb, we get 3 IOPS (1:3 ratio) with min 100 IOPS) - 16,000 IOPS max..
+gp3 : Min 1 GB, Max 64 TB.. (Min 3000 IOPS and Max 80,000 IOPS) - We can adjust IOPS based on app requirement, but cost us addl.
+
+---
+
+io1 and io2 : If our workload required specific IOPS count.. Critical workload required specific IOPS.. $$$$
+
+io1 : min 4 gb.. Max: 16 TB.. (1 gb gives 50 IOPS (1:50 Ratio))
+io2 : Min 4 GB.. Max: 64 TB.. (Min: 100 IOPS, Max: 200000 IOPS)
+
+---
+
+HDD : SC1, St1 : bit older as its HDD.. Less performance compared to SSD, but very cheap..
+
+Throughput optimised HDD / st1 : Suitable for bigdata, datawarehousing and log processing.. 
+Cold HDD / sc1 : Less performance and less cost than st1.. 
+
+---
+
+Standard / Magentic : Low cost storage Solutions.. Min 1 GB.. Max 1 TB..
+
+-------
+
+
+lsblk
+df -Th
+file -s
+mkfs
+mount
+
+xfs_growfs
+growpart
+
+
+ext3 : Third extended file system : 2001, Max File Size : 2 TB, Max Volume Size: 32 TB.. legacy systems
+ext4 : Fourth extended file system : 2008, Max file size: 16 TB, Max volume Size: 1 Exabyte.. 
+xfs : 2001 ported to linux, Max file size: 8 Exabyte, Max volume size: 8 Exabyte : bigdata, enterprise servers.. 
+
+
+lsblk : List all the block based devices and identify the name of existing volumes.. This shows all the volumes (Not just OS Detected volumes)
+
+df -h	: Shows os identified volume info (h --> human readable, T --> type of file system)
+df -Th
+
+Step 1 : Create volume in Same AZ as your ec2 instance and attach it, identify the volume name.
+
+volume name: nvme1n1
+Volume full path : /dev/nvme1n1
+
+Step 2 : Verify file system status in new ebs volume
+
+sudo file -s /dev/nvme1n1
+
+/dev/nvme1n1: data		--> No file system
+
+Step 3 : Create a file system and write it to the volume
+
+sudo mkfs -t xfs /dev/nvme1n1
+
+sudo file -s /dev/nvme1n1
+
+Step 4 : Create a directory and mount the volume to the directory.
+
+cd /mnt
+sudo mkdir newvol
+
+sudo mount /dev/nvme1n1 /mnt/newvol/
+
+sudo touch newvol{1..10}.txt
+
+---
+
+Step 5 : To make the mount persistent, that can survive the reboots / stop & starts.. 
+
+grab the entry of our new mount from "/etc/mtab"
+
+cat /etc/mtab | grep nvme1n1
+
+
+/dev/nvme1n1 /mnt/newvol xfs rw,seclabel,relatime,attr2,inode64,logbufs=8,logbsize=32k,sunit=8,swidth=8,noquota 0 0
+
+Write the volume entry in "/etc/fstab" file.. 
+
+sudo vim /etc/fstab
+
+save the entry into fstab file.. 
+
+mount -a
+mount -all
+
+------
+
+Sometimes, we may need to increase the existing volume size.. 
+
+Step 1 : Choose the volume in aws console, Edit and increase the size.
+
+lsblk : 10 gb
+df -Th : 5 gb
+
+sudo xfs_growfs -d /mnt/newvol/
+
+-----
+
+If we want to increase the root volume size, You first add addl storage at aws console, then increase the partition of root volume.
+
+sudo growpart /dev/nvme0n1 1
+
+* we may need to reboot to take this effect.
+
+----
+
+In AWS, We dont have option to decrease the volume size.. Only increase is possible.. 
+
+10% existing volume 
+(or)
+10 Gb				--> Which ever is higher, we add it.. 
+
 
 
 
