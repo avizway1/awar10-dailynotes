@@ -411,20 +411,154 @@ sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,ret
 
 findmnt -t xfs
 
+======================================
 
-
-
-
-
-
-
-
-
-
+D: 03/07/2026
 
 GoldenAMI / Customised AMI : 
 
+Requirement : We need 10 ec2 instances with below custom settings
+1. Need custom User with password and Sudo Permissions					--> Done			
+2. Need packages i.e; telnet, tree, AV, Internal approved softwares, monitoring softwares
+3. WebServer by installing httpd										--> Done
+4. Mount EFS for shared storage at documentrootpath of apache/httpd		--> Done
+5. add an addl volume and make use to store your content.				--> Done
 
+Option 1 : Launch 10 ec2 instance, connect to each and every instance and perform the above customisations x10 times.
+
+Option 2 : Launch 1 ec2 instance, Connect and perform the modifications, then Create a CustomAMI / GoldenAMI. then launch 10 instance / 20 instances from the GAMI.
+
+
+1. ssh config : /etc/ssh/sshd_config
+
+sudo vim /etc/ssh/sshd_config
+passwordauthetication yes
+
+1.1 cloud init config : /etc/cloud/cloud.cfg
+
+ssh_pwauth--> true
+
+sudo systemctl restart sshd
+sudo systemctl restart sssd
+
+sudo useradd avinash
+sudo passwd avinash
+sudo usermod -aG wheel avinash
+
+---
+
+2. sudo dnf install tree -y
+sudo dnf install telnet -y
+
+---
+
+3. sudo dnf install httpd -y
+
+sudo systemctl sytart httpd
+sudo systemctl eanble httpd
+
+---
+
+4. Create efs and. mount it to /var/www/html/ and add the entry into /etc/fstab file for perm mount.
+
+---
+
+5. create an addl volume and moun it and make it perm mount
+
+lsblk
+
+/dev/nvme1n1
+
+sudo file -s /dev/nvme1n1
+sudo mkfs -t xfs /dev/nvme1n1
+sudo cd /mnt
+sudo mkdir addlvol 
+sudo mount /dev/nvme1n1 /mnt/addlvol
+
+sudo tail -n 1 /etc/mtab
+
+/dev/nvme1n1 /mnt/addlvol xfs rw,seclabel,relatime,inode64,logbufs=8,logbsize=32k,sunit=8,swidth=8,noquota 0 0
+
+sudo vim /etc/fstab
+
+------------
+
+=============
+
+IMDS : Instance MetaData Service
+
+v1 : Less secured - SSRF Server Side request forgery
+v2 : It needs token to access metadata
+
+curl http://169.254.169.254/latest/meta-data/hostname
+
+ami-id
+ami-launch-index
+ami-manifest-path
+block-device-mapping/
+events/
+hostname
+identity-credentials/
+instance-action
+instance-id
+instance-life-cycle
+instance-type
+local-hostname
+local-ipv4
+mac
+managed-ssh-keys/
+metrics/
+network/
+placement/
+profile
+public-hostname
+public-ipv4
+public-keys/
+reservation-id
+security-groups
+services/
+system
+tag-sets/
+
+---
+
+v2 : We need to generate a token and use this token to get the instance info. token has an exipration period.
+
+curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600"
+
+AQAEAA00cfoLi6O_-ZNOF5NHSzsvk3olSROcJwwvYPIP6hUQ5joaxA==
+
+TOKEN=$(curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600")
+
+echo $TOKEN
+
+curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/public-ipv4
+
+=======
+
+userdata: This helps to execute commands when instance launched for the firsttime. 
+--> Userdata execute comamnds as root user.
+--> the script size should not exceed 16 Kb
+--> Output logs location : /var/log/cloud-init-output.log
+--> aws copies the userdata to this path, then executes it: 
+/var/lib/cloud/instances/<instance-id>/user-data.txt
+
+
+
+# 	: Hash / Sharp : Signals a comment in most scripting languages
+!	: Bang			
+/bin/bash	: The absolute path to the bash executable file/commands
+
+#!/bin/bash
+dnf install httpd -y
+systemctl start httpd
+systemctl enable httpd
+echo "<h1>This website created and delivered using Userdata</h1>" >> /var/www/html/index.html
+
+
+vim web.sh
+chmod +x web.sh
+./web.sh
 
 
 
