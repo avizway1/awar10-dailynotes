@@ -130,10 +130,38 @@ using above info, it prepares a hashing, then chooses the target..
 2. create an EFS and mount it to ec2 instance documentroot path /var/www/html/, make it perm mount.. 
 3. Create some web content into this instance documentroot path. Stop and start instance and veify output. 
 4. Create a goldenAMI and launch an ec2 instance and verify.
-5. Create a TargetGroup and dont add any ec2 instance. 
+5. Create a TargetGroup and "dont add any ec2 instances". 
 6. Create a LoadBalancer and verify the out. Should not deliver any output (5** status error)
+7. Create a launch template with GAMI (Step-4), and choose "instance Type, Keypair and Security Group".. 
+* Dont select Subnet.
 
 
+90% times --> B2B Applications (Business to Business)
+
+ASG : Auto Scaling Group: 
+
+Balanced best effort: If launches fail in one Availability Zone, Auto Scaling will attempt to launch in another healthy Availability Zone.
+
+Balanced only : If launches fail in one Availability Zone, Auto Scaling will continue to attempt to launch in the unhealthy Availability Zone to preserve balanced distribution.
+
+
+
+1. Manual Scaling : Manually adjusting the desired capacity. 
+
+2. Scheduled Scaling : Preductable but want to automate the Adjusting the desired capacity.
+
+3. Automatic Scaling : Based on workload i.e; cpu, memory, req count.. Min: 1 Max: 10
+
+	3.1 Simple Scaling
+	3.2 step scaling
+	3.3 Target trcking scaling ***
+
+
+if you want to update the instance cinfiguration i.e; instance family, Update the Launch template and depend on Instance refresh.
+
+if you want to update the backend ec2 instance softwares/programs, then Take a base instance, Install/update, then create a goldenAMI, then update the launch template, then perform the instance refresh.
+
+If you want to update the web content delivering via ec2 instances, connect to one of the instance and replace the content into efs mounted documentroot path, so all instances get the updated data. 
 
 
 
