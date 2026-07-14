@@ -1,0 +1,116 @@
+
+
+DNS : Domain Name System : Its like a phonebook of the internet.. This is responsible for transalating human readabble domain names / FQDN (Fully Qualified Domain name) into machine readable IP address.. 
+
+DNS will have 4 com[ponents..
+
+DNS Resolver / Recursor		--> Our query first hits this (local DNS, ISP DNS)
+Root Nameservers 			--> This direct the resolver to the specific TLD server
+TLD nameservers				--> .com, .org, .in, .net
+Authoritative Nameservers	--> Final source of truth that actually holds the wesite IP address record
+
+
+DNS Port number is 53, so AWS named their DNS service as "ROUTE53"
+
+Domain Registrer : namecheap, godaddy, bigrock, hostinger, AWS R53..
+
+ICANN : internet corpoation for Assigned Named and Numbers : Governing body for global internet policies.
+IANA : Operational Department in ICANN : THis deprt will do technical work i.e; managing root zone DB, Manging IP.. 
+
+
+Domain Name = Hosted Zone Name
+
+HostedZone : awswithavinashreddy.com							--> 0.50$/Month
+--> Public HostedZone : works over internet.. (internet)		--> Choosed this
+--> private hostedzone : works within the network.. (intranet)
+
+When we create a HostedZone, Automatically we get 2 records and we dont modify and we cant delete.. 
+1. NS Record : Name Server Record : these are the authoritative records, that holds the actual domain mapping records.. 
+
+grab the 4 NS Records and Configure these at Domain Registrer's DNS servers.. 
+THis will take 24 hrs to take effect, when configured for the first time. 
+
+2. SOA Start of Authority : This contains domains administrative details for zone. It contains serial umber, refresh interval, admin eamil
+
+---
+
+A Record : Address Record : maps domain name directly to an IPv4 Address.
+AAAA Record :  maps domain name directly to an IPv6 Address.
+CNAME Record : Cananical Name : Forward an alias domain to a primary domain name.
+MX Record : Directs emails to the correct incoming email server.
+TXT Record : text record comonnly used for domain ownership verification and spam prevention. 
+
+
+How to verify DNS IP address configured in your laptop.?
+Ans: 
+
+8.8.8.8 --> google DNS servers
+8.8.4.4
+1.1.1.1 --> cloudflare DNS server
+
+ncpa.cpl --> Network interfaces --> properties, ipv4 --> dns servers
+
+
+Launched an ec2 instance and delivering a webpage.. 
+1. Delivering with Instance IP
+2. Delivering with http protocol
+
+
+AWS has a service named ACM for SSL/TLS certificate genration, but it wont support adding certificate directly at instance level. 
+
+Pre-req: Create 2 Records with our domain name mapping to IP Address.. 
+
+install below packages
+
+sudo dnf install certbot mod_ssl python3-certbot-apache
+
+create a configuration for apache
+
+sudo vim /etc/httpd/conf.d/awswithavinashreddy.conf
+
+<VirtualHost *:80>
+    ServerName awswithavinashreddy.com
+    ServerAlias www.awswithavinashreddy.com
+    DocumentRoot /var/www/html
+    
+    <Directory /var/www/html>
+        AllowOverride All
+        Require all granted
+    </Directory>
+    
+    ErrorLog /var/log/httpd/awswithavinash-error.log
+    CustomLog /var/log/httpd/awswithavinash-access.log combined
+</VirtualHost>
+
+---
+
+sudo systemctl restart httpd
+sudo apachectl configtest				--> Syntax OK
+
+sudo certbot --apache -d awswithavinashreddy.com -d www.awswithavinashreddy.com 
+
+================
+
+What is ACM : Amazon certificate manager.. THis service helps us to generate an SSL/TLS certificate, we can map this cert with aws native services.. This service is free..
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
