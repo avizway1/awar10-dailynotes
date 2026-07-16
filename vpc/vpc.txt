@@ -1,0 +1,165 @@
+
+
+VPC : Virtual Private Cloud : network for our workload
+
+Default VPCs all subnets are public Subnets. By default, all instances that runs in defucalt VPC gets internet and these are accesable over the internet. 
+
+CustomVPC : We have control on subnets and its internet settings. 
+
+
+IPv4 : 32 bit : 2^32 : 4.3 billion unique IPs **
+IPv6 : 128 bit : 2^128 : 340 unidecillion unique IPs
+
+
+Public IP : Works over internet.. Its unique across the globe.. $$$
+Private IP : Works within the network.. No COst/Free.. 
+
+DHCP : Dynamic Host Configuration Protocol : It allocates an IP address to the devices added to the network. 
+Address lease time : specific time that an IP is bound to that host. it may change after lease time complete. 
+
+IPv4 has total 5 classes.. 
+
+Class A	: 0 - 126		: 0.0.0.0 - 126.255.255.255
+Class B	: 128 - 191		: 128.0.0.0 - 191.255.255.255
+Class C	: 192 - 223		: 192.0.0.0 - 223.255.255.255
+
+Class D	: 224 - 239		: 224.0.0.0 - 239.255.255.255
+Class E	: 240 - 255		: 240.0.0.0 - 255.255.255.255
+
+127.0.0.0 --> loopback / localhost
+
+
+IPv4 is 32 bit ===> 8 bit . 8 bit . 8 bit . 8 bit
+
+ifconfig
+ipconfig /all		--> windows
+
+Class A	: 0 - 126		: 0.0.0.0 - 126.255.255.255
+Class B	: 128 - 191		: 128.0.0.0 - 191.255.255.255
+Class C	: 192 - 223		: 192.0.0.0 - 223.255.255.255
+
+Class D	: 224 - 239		: 224.0.0.0 - 239.255.255.255
+Class E	: 240 - 255		: 240.0.0.0 - 255.255.255.255
+
+Private IP Addresses are free to unse internally.
+
+Class A	: 10			: 10.0.0.0 - 10.255.255.255
+Class B	: 172			: 172.16.0.0 - 172.31.255.255
+Class C	: 192			: 192.168.0.0 - 192.168.255.255
+
+
+Network : Group of interconnected devices, that can communicate each other. 
+Host : A device part of a network, that is consuming an IP address. 
+
+
+How many Networks you required.? Ans: 1
+How many devices/hosts you are going to add that netowrk.? Ans: 50
+
+Class A : N.H.H.H		: we can create 127 networks and each network supports 16 million hosts
+Class B : N.N.H.H		: we can create 16,000 networks and each network supports 65,000 hosts.
+Class C : N.N.N.H		: we can create 2 million networks and each network supports 256 hosts.
+
+
+125.0.0.0		--> 
+125.0.0.1
+125.0.0.2
+125.0.0.255
+125.1.0.0
+125.1.0.1
+125.1.0.255
+125.2.0.0
+...
+...
+125.(0-255).(0-255).(0-255)
+
+
+class B: 172.16.0.0
+
+128 - 191			--> network
+128.0
+128.1
+128.2
+128.255
+129.0
+129.255
+130
+..
+..
+191.0
+191.1
+191.255
+
+
+128.1.0.0
+128.1.0.1
+128.1.0.2
+128.1.1.0
+128.1.1.1
+128.1.255.255
+
+128.1.(0-255).(0-255)
+
+
+192.168.0.0
+192.168.0.1
+192.168.0.2
+192.168.0.3
+192.168.0.255		--> 256 IPs
+
+===================
+
+/32		: 32 - 32 = 0 = 2^0 = 1
+/31		: 32 - 31 = 1 = 2^1 = 2
+/30		: 32 - 30 = 2 = 2^2 = 4
+/29		: 32 - 29 = 3 = 2^3 = 8
+/28		: 32 - 28 = 4 = 2^4 = 16			--> Minimum CIDR our VPC Supports
+
+/24		: 32 - 24 = 8 = 2^8 = 256 IPs
+
+/22		: 2^10 = 1024
+
+/16		: 2^16 = 65536						--> Max a VPC CIDR supports /16
+
+
+We cannot use all the IPs which a subnet gives.. 
+In any network, including our home networks, By default, 2 IPs reserved.. First IP (network ID) and Last IP (Broadcasting IP)
+
+Along with above 2 Ips.. 3 More IPs will be reserved by AWS.. 
+--> VPC Router
+--> AWS DNS
+--> Future Use
+
+So, Total 5 IPs will be reserved by AWS.. So now usable IPs count will change.. 
+
+/28 --> 16 IPs - 5 AWS Reserved = 11 Usable IPs
+/24 --> 256 IPs - 5 AWS Reserved = 251 Usable IPs
+/16 --> 65536 IPs - 5 AWS Reserved = 65531 Usable IPs
+
+
+20 IPs ..??? 		: /27 : 32 - 5 = 27 Usable IPs
+
+200 IPs ..??		: /24 : 256 - 5 = 251 Usable IPs
+
+2000 IPs ..??		: /21 : 2048 - 5 = 2043 Usable IPs
+
+
+1. How big VPC we want for our Network.?
+
+2. How many subnets we need in our VPC.?
+
+	2.1 How many Public Subnets.? Approx count for public subnet.
+	2.2 How many Private Subnets.? Approx count for private subnet.
+		2.2.1 ANy Private subnet, that require internet.
+		2.2.2 Any Private subnets, that doesnt required internet.
+
+3. Any IPs we need to reserve for future usage.?
+
+
+
+
+
+
+
+
+
+
