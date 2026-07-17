@@ -155,6 +155,104 @@ So, Total 5 IPs will be reserved by AWS.. So now usable IPs count will change..
 3. Any IPs we need to reserve for future usage.?
 
 
+========================
+
+D: 17/07/2026
+
+Public Subnet : Subnet which is accesable over Interenet. (Load Balancer / Jump Server)
+Private SUbnet : No Access to internet / Not accesable over internet.
+
+1. How big VPC we want for our Network.? Ans: 400 (min 100 - 300) : /23 --> 512	--> 
+
+VPC CIDR : 192.168.0.0/23
+
+class A : 10.0.0.0/23
+Class B : 172.16.0.0/23
+Class C : 192.168.0.0/23
+
+IPAM : IP Address management : Excell / Solarwind IPAM
+
+2. How many subnets we need in our VPC.?
+
+	2.1 How many Public Subnets.? Approx count for public subnet.		(WEB --> LB/Jump)
+		CVPC-WEB-1a	: 192.168.0.0/27
+		CVPC-WEB-1b	: 192.168.0.32/27
+		
+	2.2 How many Private Subnets.? Approx count for private subnet.		
+		2.2.1 ANy Private subnet, that require internet.				(APP --> application servers)
+		
+		CVPC-APP-1a	: 192.168.0.64/26
+		CVPC-APP-1b	: 192.168.0.128/26
+		
+		2.2.2 Any Private subnets, that doesnt required internet.		(DB --> DB Srs)
+		CVPC-DB-1A	: 192.168.0.192/26
+		CVPC-DB-1B	: 192.168.1.0/26
+
+3. Any IPs we need to reserve for future usage.?
+		192.168.1.64/26
+		192.168.1.128/25
+
+
+Step 1 : Create a VPC.  CIDR : 192.168.0.0/23
+
+When we create VPC, automatically these will create : 
+Default Security group, Default Network ACL and Main Route table.
+
+Step 2 : Create Subnets with in our CustomVPC.
+
+		CVPC-WEB-1A	: 192.168.0.0/27	: ap-south-1a
+		CVPC-WEB-1B	: 192.168.0.32/27	: ap-south-1b
+		CVPC-APP-1A	: 192.168.0.64/26	: ap-south-1a
+		CVPC-APP-1B	: 192.168.0.128/26	: ap-south-1b
+		CVPC-DB-1A	: 192.168.0.192/26	: ap-south-1a
+		CVPC-DB-1B	: 192.168.1.0/26	: ap-south-1b
+
+Step 3 : Create IGW / Internet gateway and attach it to the VPC. 
+One IGW supports only one VPC association. 
+
+Step 4 : Create Route tables based on our application requirements. 
+
+public-route : Create a route table, Associate CVPC-WEB-1A & CVPC-WEB-1B to this route table. 
+--> Add a route 0.0.0.0/0 via Internet Gateway
+
+pvt-wi-route : Create a route table, Associate CVPC-APP-1A & CVPC-APP-1B to this route table. 
+
+pvt-woi-route : Create a route table, Associate CVPC-DB-1A & CVPC-DB-1B to this route table. 
+
+Step 5 (Optional) : Choose VPC, Go to Settings, Edit VPC settings --> "Enable DNS hostnames"
+
+Step 6 (optional) : choose public subnets, go to 'edit subnet settings" enable --> Enable auto-assign public IPv4 address.
+
+===================
+
+Testing custiom VPC.
+
+1. Launching an ec2 instance in customVPC PUblic Subnet (web sn).. Will try to connect from my laptop.. Once connected, will verify internet status. 
+
+2. Launching an ec2 instance in customVPC Private Subnet (APP sn).. Will try to connect from my laptop and it fails... Connect from the JUMP Server.. Once connected, will verify internet status. 
+
+=================
+
+Requirement : I need Internet connectivity for my Private subnet instances. (Download patching, accessing data hosted over internet)
+
+NAT Gateway (Network Address Translator) : NAT helps to provide internet to private subnet instances, without exposinbg resources directly over internet. 
+
+Regional : AWS scales our NAT GW across Multiple AZs.. One AZ downtime wont effect the NAT Operations.
+Zonal : NAT Creates in Specific AZ.. (Less HA, we loss internet if we face any issues with AZ)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
