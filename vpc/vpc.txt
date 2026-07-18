@@ -241,15 +241,68 @@ Regional : AWS scales our NAT GW across Multiple AZs.. One AZ downtime wont effe
 Zonal : NAT Creates in Specific AZ.. (Less HA, we loss internet if we face any issues with AZ)
 
 
+=================
+
+D: 18/07/2026
+
+Network ACLs : 
 
 
 
+Security Group: SG act as firewall at Instance level. SG are stateful.. We need to take care about the inbound rules. By default, We allow all traffic on outbound rules. 
+
+NACL : Network Access Control List : Act as firewall at Subnet level. One subnet can contains multiple instances.
+--> NACL is stateless, We need to open traffic InBound and outbound also. 
+--> Traffic flow required ephemeral ports. 
+--> NACL wont track taffic receiving and leaving ports. 
+--> It uses Ephemeral ports (Temporary ports)
+
+Inbound : Traffic coming into the subnet from outside. 
+* Traffic coming from internet to connect your ec2 instance / access your webpage..
+* Traffic from another subnet, entering into our subnet.
+* Traffic from on-premise entering into subnet.
+
+Outbound: Traffic leaving your subnet.. 
+* Webserver running in our subnet is responding back to the client. 
+* Ec2 instance, inside our subnet is accessing internet (google / ftp / fb). 
+* Traffic going out to the outer world. 
 
 
+Default Network ACL behaviour is "allows everything" in inbound and outbound.
+
+==================
+
+Endpoints : 
+
+Gateway Endpoint : Free, Only data transfer cost.. AWS Manages.. 
+Interface Endpoint : Per hour cost, Data traffic flows over an ENI.. We manage.. 
 
 
+Public subnet ec2 instances can access s3 service, if we attach an IAM role. 
+Private Subnet ec2 instances can't access s3 service, Even if we attach an IAM role. Reason: We dont have internet access. 
 
 
+---
+
+Instance connect secured configuration.
+
+Instance endpoint runs in customVPC Public Subnet.. 
+
+1. Create a SG for Instance ENdpoint.. 
+
+Inbound: No need to open anything
+Outbound: SSH / 22 --> VPC CIDR RANGE (192.168.0.0/23)
+
+2. EC2 Instance SG (Which we are trying to connect over Instane Endpoint)
+
+Inbound: Open Port 22/SSH --> EP-SG
+
+----
+
+Same as Instance connect, if you want to conect using "System manager Session Manager", You can create endpoints
+1. ssm
+2. ssmmessages
+3. ec2messages
 
 
 
