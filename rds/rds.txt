@@ -1,0 +1,36 @@
+
+RDS : Relational Database Service : data stores structured manner in tables using rows and columns. 
+--> Tabular format
+--> CRUD : Create, Read, Update and Delete
+
+NoSQL : Non-Relational Databases : Data stores unstructured or semi structured data in flexible formats i.e; document, key-value, graphs, JSON.
+
+
+
+On-Premise Hosted DB : Physical hardware.? OS Installation.? OS Patching.? DB Install.? DB Configuration.? DB backup.? DB HA.? DB FT.?
+
+EC2 Instance Hosted DB : OS AWS Provides.. OS Patching.? DB Install.? DB Configuration.? DB backup.? DB HA.? DB FT.?
+
+RDS : OS AWS, OS Patching AWS, DB Configuration AWS (PS),  DB backup AWS (SS), DB HA AWS (M AZ), DB FT AWS (RR).. 
+
+============
+
+RDS supports 7 Relational Database Engines..
+
+1. Amazon Aurora
+	1.1 Aurora Mysql compatable edition
+	1.2 postGRE SQL Compatable edition
+2. MySql : 3306 : mysql workbench 
+3. MSSQL : 1433 : ssms (Sql server management studio)
+4. MariaDB : 3306 : workbench
+5. PostgreSQL : 5432 : pgadmin
+6. Oracle DB : 1521 : SQL Developer / Toad
+7. IBM DB2 : 50001 : ibm enterprise tool
+
+dbeaver
+
+====================================================
+
+
+
+

@@ -355,6 +355,68 @@ Step 6 : Edit member accounts route table with Central NW account's VPC CIDR ran
 Step 7 : Edit central NW vpc account route table with member accoutn VPC CIDR.
 
 
+=====================
+
+D: 21/07/2026
+
+Can we extend existing VPC CIDR range.?
+Ans: Yes, New CIDR range should not conflict with existing VPCs CIDR range. also, it should be in same class. 
+
+Can existing VPC instances, communicate with new subnet's ec2 Instances.?
+Ans: yes, We get a local route, this local route helps to establish communication.
+
+---
+
+VPN : Virtual private Network : 
+
+site-to-site VPN (s2s VPN): 
+
+cisco meraki
+dell sonic
+forgigate
+palo alto
+yamaha
+watchguard
+checkpoint
+barracuda
+f5
+
+
+step 1 : Create customer gateway : We need to provide our office firewall publicip address. 
+Step 2 : AWS End needs Virtual private gateway : 
+Step 3 : using CGW and VPGW, create a S2S vpn connection and download the configuration based on your orgnisation firewall manifacturar.. 
+
+Handover it to firewall team, they need to configure the settings to establish the connection to the AWS tunnels.
+
+-------------
+
+NAT Gateway : IPv4
+
+Egress only Internet Gateway : Same as NAT gateway, Provides internet to private subnet ec2 instances, Works with IPv6.
+
+-------------
+
+AWS Direct Connect : A dedicated physical network connection, between AWS network and our corporate network. This eliminates our traffic flow to aws over public internet.. 
+1 GBps, 10 Gbps.. 
+
+
+===============================================================
+
+
+
+How many subnets and why.?
+Min 6 subnets.. 2 web, 2 app, 2 db, 2 lambda
+
+pvt subnet required internet.?
+NAT Gateway
+Endpoint
+NACL : 
+
+
+
+
+
+
 
 
 
