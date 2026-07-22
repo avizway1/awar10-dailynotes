@@ -31,6 +31,89 @@ dbeaver
 
 ====================================================
 
+We dont create resources with most recent versions.. Untill unless its tagged as LTS (long term support).. 
+We follow "N-1"
+
+EOL : End of Life		: we cannt use it anymore
+EOS : End of Support	: Service provider wont patch software.. wont help to fix bugs..
+Extended Support : Provide support for EOS version, on additional cost basis.. 
+
+t4g.micro 		--> g--> graviton processor, AWS Owned.. Less cost comapred to other..
+
+Storage autoscaling --> AWS automatically Adds more storage when our RDS runs out of space.
+5 GB  (or) 10% of existing storage ==> Picks wich is more
+
+logs:
+Error log
+Slow query log
+
+
+------
+
+myrdsdb.c1ekg4m6e0fi.ap-south-1.rds.amazonaws.com		--> Create CNAME record
+rds.awswithavinashreddy.com
+dbadmin
+Avinash12345
+
+----
+
+sudo dnf install mariadb105 -y
+
+mysql -h rds.awswithavinashreddy.com -u dbadmin -P 3306 -p
+
+--> Option 1: COnnect to Jump server and install mysql client cli and connect
+--> Option 2: Install mysql workbench in your laptop and connect via jump server "connedt TCP/IP over ssh"
+--> Option 3: Create a VPC environment in cloudshell and cionnect to RDS.
+
+
+SHOW DATABASES;
+
+CREATE DATABASE mystudentrdb;
+
+USE mystudentrdb;
+
+CREATE TABLE users ( id INT AUTO_INCREMENT PRIMARY KEY,
+name VARCHAR(100),
+age INT
+);
+
+DESC users;
+
+INSERT INTO users (name, age) VALUES ('Avinash','36');
+INSERT INTO users (name, age) VALUES ('Anudeep','34');
+INSERT INTO users (name, age) VALUES ('Aravind','32');
+
+SELECT * FROM users;
+SELECT * FROM users LIMIT 1;
+SELECT * FROM users WHERE age > 33;
+SELECT * FROM users WHERE id = 1;
+
+UPDATE users SET age = 37 WHERE name = 'Avinash';
+
+DELETE FROM users WHERE id = '3';
+DELETE FROM users WHERE name = 'Avinash';
+TRUNCATE TABLE users;
+DROP DATABASE mystudentrdb;
+
+---
+
+SELECT user, host FROM mysql.user;		--> Shows all the existing users.
+
+CREATE USER 'avinash'@'%' IDENTIFIED BY 'Avinash12345';
+
+GRANT SELECT, INSERT, UPDATE on mydb.* TO 'avinash'@'%';
+
+FLUSH PRIVILEGES;
+
+exit;
+
+==================
+
+
+
+
+
+
 
 
 
