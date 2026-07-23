@@ -109,6 +109,28 @@ exit;
 
 ==================
 
+D: 23/07/2026
+
+Single-AZ DB instance deployment (1 instance): Creates a single DB instance without standby instances. This setup provides:
+99.5% uptime & No data redundancy
+
+Multi-AZ DB instance deployment (2 instances): Creates a primary DB instance with a "non-readable standby instance" in a separate Availability Zone. This setup provides:
+99.95% uptime & Redundancy across Availability Zones.
+
+Multi-AZ DB cluster deployment (3 instances) : Creates a primary DB instance with "two readable standbys" in separate Availability Zones. This setup provides:
+99.95% uptime & Redundancy across Availability Zones
+Increased read capacity & Reduced write latency
+
+---------
+
+
+ReadReplica : Replica copy of primary database..
+
+
+
+
+
+
 
 
 
