@@ -123,8 +123,35 @@ Increased read capacity & Reduced write latency
 
 ---------
 
-
 ReadReplica : Replica copy of primary database..
+
+
+====================
+
+D: 24/07/2026
+
+Amazon Aurora : 
+--> Aurora has serverless capabilities.
+--> We can define minimum resource and max resource for our DB. 
+--> AWS maintains 6 copies of data across diff AZs.. (6 way replication across 3 AZs)
+--> Aurora supports upto 15 replicas. 
+
+ACUs : Aurora capacity units: 
+1 ACU gives us 2gb RAM 
+
+
+mysql -h myaurora.cluster-chc66g4wq10o.ap-south-1.rds.amazonaws.com -u dbadmin -P 3306 -p --ssl
+
+mysql -h myaurora.cluster-chc66g4wq10o.ap-south-1.rds.amazonaws.com -u dbadmin -P 3306 -p
+
+
+--> We can create 
+
+
+
+
+
+
 
 
 
