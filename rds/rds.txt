@@ -145,12 +145,44 @@ mysql -h myaurora.cluster-chc66g4wq10o.ap-south-1.rds.amazonaws.com -u dbadmin -
 mysql -h myaurora.cluster-chc66g4wq10o.ap-south-1.rds.amazonaws.com -u dbadmin -P 3306 -p
 
 
---> We can create 
+==================================
+D: 27/07/2026
 
 
+Redis : Open source Database service.. 
+
+valkey : its a forked version of opensource widely used caching service "REDIS".
+
+Elasticache : Its a service designed for caching the data for RDS.. 
+
+export REDIS_HOST="mydbcache-qoikij.serverless.aps1.cache.amazonaws.com"
+export REDIS_PORT="6379"
+export CACHE_TTL="300"
 
 
+================================
 
+DynamoDB: AWS nosql database service. "Single digit millisecond latency at any scale of data".. 
+--> Serverless.. No need to provision the capacity. 
+--> RCU and WCU (read / write capacity units)
+
+dynamodb is cheap for Read Operation and costly for write operations.
+
+DAX : Dynamodb accelerator.. cache service for dynamodb. 
+
+===========================
+
+Full Load : Migrating only the existing data from source to destination.
+
+CDC / Change Data Capture : Captures and replicates only the data updates in real time from source to destination.
+
+Full load + CDC (Migrate existing data and replicate ongoing chnages) : Combines the above 2. 
+
+
+1. create DMS Instance
+2. Create a Source Endpoint with source DB Info - test connection
+3. Create a target Endpoint with dest DB Info - test connection
+4. Create DMS Task (Type of Migration, Table include, exclude)
 
 
 
