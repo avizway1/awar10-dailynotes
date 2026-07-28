@@ -1,0 +1,132 @@
+S3 : Simple Storage Service : 
+
+Its an Object based storage, You can store anything, it treat as Object. 
+We can store flat files. 
+
+bucket is nothing but a folder or directory with unique namespace across the globe or within account..
+
+Global namespace : By default, S3 bucket names are unique across the globe. 
+
+Account Regional Namespace : unique within your account, AWS make it unique by adding suffix to the names. 
+
+General purpose : Recommended for most use cases and access patterns. General purpose buckets are the original S3 bucket type. They allow a mix of storage classes that redundantly store objects "across multiple Availability Zones".
+
+Directory : Recommended for low-latency use cases. These buckets use only the S3 Express One Zone storage class, which provides faster processing of data within a "single Availability Zone".
+
+
+Min: 3 char
+Max: 63 char
+should not start with .
+should not end with .
+no ..
+should not resemble IP address format
+
+--> We have unlimted storage. 
+
+Min Object Size: 0 bytes
+Max Object Size: 50 TB (earlier 5TB Only)
+
+Object URL : https://avinash2807.s3.ap-south-1.amazonaws.com/s3.txt
+
+Virtual path url: (When we dont have . in bucket name)
+https://<bucketname>.s3.<region-code>.amazonaws.com/<object-name>
+https://<bucketname>.s3.amazonaws.com/<object-name>
+
+Standard URL : https://s3.<region-code>.amazonaws.com/<bucket-name>/<object-name>
+
+
+** Not recommended to make any object/bucket public. THis violates the organisations data and compliance polocies. 
+pre-sign URL : URL works only for certain time period. After that time, URL expires. 
+
+How to make an Object Public in S3.? 
+
+1. Account level block public access : OFF by default.. 
+2. Bucket level public access : Specific to bucket : Block all public access: On --> off
+3. Object Level: 
+
+--> Using ACLs : Access Control List
+--> Using Bucket Policy
+
+
+step 1 : verify account level
+Step 2 : verify bucket level
+	2.1 Block all public access: off
+	2.2 permisisons --> Object Ownership --> edit --> enable ACLs
+Step 3 : choose object and make public using ACL.
+
+* THis method has a limitation, If we overwrite with new verison, we need to make public again. 
+
+----
+
+S3 pricing: 
+
+How many APi calls happing on our data.? (put/get/update)
+How much data trasfering (in/out)
+How much data youa re storing in S3.
+What storage class you are using.? (s3 standard / IA / Glacier)
+Are you performing any data retrivals.? 
+
+----
+
+Access Pattern : 
+1. How frequently you are accessing the data.?
+2. Do you need data without delay.? or you are okay to access with delays.?
+
+S3 Standard : Frequently accessed data can be stored here. 
+--> We can access data immediately. 
+--> Data automatically spans across multiple AZs (>=3 AZs)
+--> 99.99% Availability.. 99.999999999% Durability (11 9's).. 
+
+Yearly (365 days): 52 minutes 36 seconds downtime expected for 99.99% Availability..
+
+Standard-IA (Infrequently Accessed) : 
+--> THis is designed to store less freq accessed data.  (less cost than S3 Standard)
+--> We can access data immediately. 
+--> Data automatically spans across multiple AZs (>=3 AZs)
+--> 99.99% Availability.. 99.999999999% Durability (11 9's).. 
+
+One Zone-IA (Infrequently Accessed) : 
+--> Store easily reprodusable data.. 
+--> THis is designed to store less freq accessed data.  (less cost than S3 Standard)
+--> We can access data immediately. 
+--> Data stores only in one AZ
+--> 99.95% Availability.. 99.999999999% Durability (11 9's).. 
+
+
+Glacier Instant Retrieval : 
+--> Long-lived archive data accessed once a quarter with instant retrieval in milliseconds
+
+Glacier Flexible Retrieval (formerly Glacier) : 
+--> Long-lived archive data accessed once a year with retrieval of minutes to hours
+--> We cannot access data immediately. 
+--> We need to perform data retraival to access the data. 
+
+Glacier Deep Archive :
+--> Long-lived archive data accessed less than once a year with retrieval of hours
+
+Intelligent Tier: 
+--> when we dont have clarity on data access patterns. 
+--> freq changing data access requirements. (unknown access patterns)
+
+
+Bulk retrieval : Typically within 5-12 hours.
+Standard retrieval : Typically within 3-5 hours.
+Expedited retrieval : Typically within 1-5 minutes when retrieving less than 250 MB.
+
+
+
+Storage classes
+Versioning
+Life Cycle rules
+Encryption
+Bucket policy
+Events
+Object lock
+
+
+
+
+
+
+
+

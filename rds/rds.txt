@@ -185,9 +185,29 @@ Full load + CDC (Migrate existing data and replicate ongoing chnages) : Combines
 4. Create DMS Task (Type of Migration, Table include, exclude)
 
 
+=========================
 
+D: 28/07/2026
 
+Redshift : Its an OLAP on AWS. 
 
+OLAP : Online Ananalitical processing : Redshift, Google bigQuery, snowflake, Clickhouse : Tb to Pb : Huge Historical data.. 
+
+OLTP : Online Transaction Processing : mysql, postgresql, oracle, dynamodb : Gb-Tb : Current/ realtime transactions.. 
+
+Leader Node : Plans the query execution.. 
+Compute Node : Holds the actual data.. Takes the query from leader node and executes and return the result.
+
+WLM : Workload Management: THis feature helps redshift to control how queries are using cluster resources. 
+
+If we are running 10 quesries at a time.. some are simple wueries, some are complex ETL, long running queries.. Without WLM, all gets same priority..
+
+With WLM.. It completes the simple workload and plans/ optimise the complex workload.
+
+To perform this, it creates a Queue.. Every Queue will have its memory and cuncurrent slots. 
+
+AutoWLM : Redshift automatically manages. 
+Manual WLM : We can configure Queue, memory and slots. 
 
 
 
