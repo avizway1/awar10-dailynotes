@@ -113,15 +113,72 @@ Bulk retrieval : Typically within 5-12 hours.
 Standard retrieval : Typically within 3-5 hours.
 Expedited retrieval : Typically within 1-5 minutes when retrieving less than 250 MB.
 
+======================
+
+D: 29/07/2026
 
 
-Storage classes
-Versioning
-Life Cycle rules
-Encryption
-Bucket policy
-Events
-Object lock
+versioning: enable Bucket Versioning to help protect against unintentionally/Accidental overwriting or deleting objects.
+
+Without Versioning:  
+--> if you edit file and uplaod multiple times with same name, we can see/get only most recently uploaded file. We cannot track changes happening on the file.
+--> If we delete, We cannot get the object back. it permanently deletes.
+
+With versioning:
+--> if you edit file and upload multiple times with same name, we can see/get all uploaded files. We can track changes happening on the files.
+--> When versioning is set to hide, You get a delete marker... Delete the delete marker, to get the object back.
+
+
+Delete : we get a delete marker, Delete the delete marker to get the object back.
+Permanently delete : Deletes completely, No recover option.
+
+
+=======================
+
+S3 Life Cycle Configuration Management Rule : LCR : 
+--> This feature helps us to transit data from one storage class to another storage class. 
+--> It also, helps us to delete data automatically.
+--> We can apply one transition for "current versioned" objects.
+--> We can apply another transition for "Previous versioned" objects.
+--> We do have option to exclude a particular version (most recent-1) from transition.. 
+
+===================
+
+
+Replication option: 
+
+SRR : Same Region Replication : Source and dest buckets should be in same region
+CRR : Cross Region Replication : Source and dest buckets should be in diff region
+
+--> Source bucket and destination bucket should enable with versioning. 
+
+* If our source bucket has some existing data, The Replication rule cannot replicate it.. We need to create a batch job.. or use sync command to replicate exiting data.. 
+
+--> Data automatically replicates after the replication creation. Existing data wont be replicate. use sync and then configure CRR/SRR.
+
+===================
+
+Object lock : This feature enforce S3 object deletion protection. 
+
+WORM : Write Once, Read many Model
+
+Governence Mode : Strictness: Moderate.. Permisisons can be bypassed if user has valid access.. root user can override and delete.. 
+
+Compliance Mode : Strictness: Highest.. Permisisons can't be bypassed.. root user can't override and delete.. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
