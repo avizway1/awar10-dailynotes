@@ -166,6 +166,107 @@ Governence Mode : Strictness: Moderate.. Permisisons can be bypassed if user has
 
 Compliance Mode : Strictness: Highest.. Permisisons can't be bypassed.. root user can't override and delete.. 
 
+==================
+
+D: 30/07/2026
+
+
+Encryption : thos method converts plain text into cypher text or scrambled text. 
+
+
+Cryptography:
+
+Symmetric Encryption : Single key will be used for encryption& decryption.. Sign and verify.. 
+--> Both the sender and the receiver must hae this identical key.
+--> AES-256 (Advanced Encryption Standard)
+
+Asymetric Encryption: We will have a public key and private key. Anyone can use the public key to encrypt the data but only the private key user can decrypt it.
+--> RSA
+
+https://www.cisco.com/site/us/en/learn/topics/security/what-is-encryption.html
+
+---
+
+
+In-Transit Encryption / At Flight : When data is in transit state, data will be encryptd. AWS takes care. 
+
+Client Side Encryption / CSE : We can encrypt our data before sending it it aws. We are fully responsible for managing the encryption keys/material.
+
+Server Side Encryption / SSE : When data is in s3 platform, we can apply required encyrpion methods. Shared responsibility.. 
+
+
+1. Who manages/generates the key material.
+2. Who can decrypt the data.
+
+Server-side encryption with Amazon S3 managed keys (SSE-S3): 
+--> S3 generated and manages the key material.
+--> Whoever has access to s3 platform, they can decrypt the data. No addl permisisons required on ency key.
+--> THis is the only key support public data sharing.
+--> There is no option to view/manage this key material.
+
+======================
+
+KMS : Key Management Service : This is a service, helps us to create, rotate, store and control encryption keys.
+
+KMS DMK (Data Management Key / Default Master Key / Data Master Key):
+--> KMS generated and manages the key material.
+--> Whoever has access to s3 platform, they can decrypt the data. No addl permisisons required on ency key.
+--> We cannot make object public.
+--> There is no option to view/manage this key material.
+--> This key generates automatically when we start using AWS services.
+
+
+SSE-KMS CMK (Customer Managed Key).. 
+--> Customer has to create the KMS key.. KMS Service managed the key material..
+--> Only s3 servcie access is not sufficient, User should have permissions on Key usage as well, along s3 access.. 
+--> There is no option to view/manage this key material.
+--> We can rotate the key material.. We do this for every 365 days.. 
+
+step 1 : choose type : symmetric
+
+Step 2 : Alias/name
+
+Step 3 : Choose key Administrator 		: Avinash_T
+
+Step 4 : Define key usage permissions	: Avinash_T
+
+Step 5 : Review and create
+
+---
+
+SSE-KMS C (Customer Provided Key).. 
+--> Customer has to create the KMS key.. Customer has to provide/upload the key material..
+--> Only s3 servcie access is not sufficient, User should have permissions on Key usage as well, along s3 access.. 
+--> There is no option to view/manage this key material.
+--> We can rotate the key material.. We do this for every 365 days.. 
+
+https://www.youtube.com/watch?v=r17Z75TqjU0&t=860s
+
+step 1 : choose type : symmetric
+
+Step 2 : Alias/name
+
+Step 3 : Choose key Administrator 		: Avinash_T
+
+Step 4 : Define key usage permissions	: Avinash_T
+
+Step 5 : Review and create
+
+Step 6 : Download the material and wrap your key and upload it
+
+================
+
+AWS global infra : If we have . in the bucket name, we cannot use this feature. 
+--> AWS uses edge locations to perform data transfers.
+
+aws s3 cp huge-file.zip s3://bucetname/ --region ap-south-1 --endpoint-url https://avinash2807.s3-accelerate.amazonaws.com
+
+https://s3-accelerate-speedtest.s3-accelerate.amazonaws.com/en/accelerate-speed-comparsion.html?region=ap-south-1&origBucketName=amzn-s3-demo-bucket
+
+
+================
+
+S3 Static Website Hosting: 
 
 
 
