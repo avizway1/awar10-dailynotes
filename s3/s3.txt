@@ -269,6 +269,78 @@ https://s3-accelerate-speedtest.s3-accelerate.amazonaws.com/en/accelerate-speed-
 S3 Static Website Hosting: 
 
 
+================
+
+D: 31/07/2026
+
+ARN : Amazon Resource Name
+
+Bucket ARN : arn:aws:s3:::aviz.tf.state.myproject
+Principal : user/group/everyone (user ARN, Everyone --> *)
+Effect : Allow / Deny : DENY
+Actions to take effect : PutObject, DeleteObject, DeleteObjectVersion, DeleteBucketPolicy, GetBucketpolicy
+
+
+Object level operation: arn:aws:s3:::aviz.tf.state.myproject/*
+Bucket level operation: arn:aws:s3:::aviz.tf.state.myproject
+
+
+https://awspolicygen.s3.amazonaws.com/policygen.html
+
+====================================
+
+
+S3's Default Performance:
+
+3500 PUT Operations per second per prefix : upload
+5500 GET operations per second per prefix : download/access
+
+--> TO improve the s3 performance, Use more prefixes.
+--> Add randomness to your objects, this improves search mechanism.
+
+=================
+
+S3 Events : 
+
+
+Lambda function : 	Run a Lambda function script based on S3 events.
+SNS topic 		: 	Fanout messages to systems for parallel processing or directly to people.
+SQS queue		:	Send notifications to an SQS queue to be read by a server.
+
+---------
+
+CORS Cross Origin Resource Sharing: A browser security guard that decides whether a website is allowed to request data from a different website. 
+
+https://aws.amazon.com/what-is/cross-origin-resource-sharing/
+
+https://www.youtube.com/watch?v=YrfDLrSVxQ8
+
+
+======================
+
+AWS Storage Gateway: It is an hybrid cloud storage service that bridges on-premise applications with AWS cloud storage. 
+
+
+1. S3 File gateway : NFS, SMB... Designed for S3 objects
+2. Amazon FSx file gateway : SMB : Amazon Fsx for windows.. Specifically for windows file shares.. 
+3. Volume Gateway : iSCSI : Amazon S3 / EBS snapshots.. 
+	--> Cached Volumes : Stores the primary dataset in Amazon S3. Only freq. accessed data stays in Local cache.
+	--> Stored Volumes : Stores the entire primary dataset locally on on-premise. Only freq-accessed data will be cached in local cache in storage gateway.
+
+4. Tape Gateway : iSCSI VTL : Amazon S3, Amazon Glacier Deep archieve.. 
+
+
+
+
+
+
+
+For Linux	: EFS (works with NFS protocol)
+For Windows	: FSx (Works with SMB protocol)
+
+
+
+
 
 
 
