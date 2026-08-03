@@ -1,0 +1,75 @@
+Cloudtrail : Track User Activity and API Usage
+
+--> Enabled by default, It can store last 90 days activities.
+--> We can store all longs into an s3 bucket or cloudwatch logs group. We can configure retention period based on our requirement.
+--> COnfigure s3 life cycle manaegement rule and setup retention period.
+--> CLoudwatch logs also has retention period on logs group.
+--> Cloudtrail suports multiAWS Acocunts. We can store all aws account logs into single Aws account's s3 bucket (central logging account).
+--> 1 x Management trail is free. 
+
+We have 4 types of trails: 
+
+1. Management trail : Designed for aws management console operation logging (Bucket create / instance launch / rds create)
+2. Data Trail : S3, Lambda, dynamoDB... We can enable to log data level operations.. (current and future resource)
+3. Insight Events : Helps to identify unuseual activities, errors or user behaviours.. 
+4. Network Trails : network flow events.. 
+
+--> We can create a trail and store data into s3/cw for unlimited days.
+--> If the AWS service is GLOBAL Service.. make sure to look for logs in "N. Virginia" region.
+
+====================
+
+Amazon Config : Track Resource Inventory and Changes. 
+This service helps to track resource history, We can enforce security gurdrails, automate compliance audits. 
+--> Config takes all the info from Cloudtrail logs. 
+
+We can configure autimatic remediation also..
+
+PCI DSS : Payment Card industry Data Security Standard
+HIPAA : health insurance probability and acocuntability act
+SOC2 : Service organisation Control
+ISO 270001 : International organisation for Standardization
+CIS : Center for Internet Security
+GDPR : General Data protection regularations
+
+Task: (challenge):
+Configure automatic remediation on S3 public access.. If an s3 bucket made public by anyone, it should automatically conver to private bucket.
+
+===================
+
+Trusted Advisor : This service wont fix any issues.. It just give advises on below area improvements.. 
+--> AWS wont give all suggestions for everyone.. 
+Based on our support plan, we get suggestions.. Basic : 12 core area checks..
+
+Cost optimization : Helps to identify Over provisioned resoources..
+Performance : Helps to identify Under Provisioned resources.. 
+Security : ANy SG opened port 22 for everyone.. 
+Fault tolerance : Multi AZ Check.. 
+Service limits : any service default limits (s3: 1000 buckets.. 5 VPCs.. 20 ASGs..)
+Operational excellence : logs enable.. Encryption.. 
+
+===================
+
+WAF : Web Application Firewall : We can create Web ACLs (Access Control List) to protect our resources.. 
+
+AWS Shield : helps to ptotect our resources from DDoS attack. (Sending massive traffic to the pplication, Goal of traffic is to take application down)
+
+Distributed Denial of Service
+DoS : Single device/connection.. 
+DDoS : Multiple devices (botnet)
+
+AWS Shield Advanaced: AWS provides a team to monitor the traffic proactively, They do attack mitigations and remediations.. Post incident help also from AWS.. 
+
+
+=================
+
+
+
+
+
+
+
+
+
+
+
