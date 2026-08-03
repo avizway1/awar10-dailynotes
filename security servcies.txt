@@ -60,7 +60,6 @@ DDoS : Multiple devices (botnet)
 
 AWS Shield Advanaced: AWS provides a team to monitor the traffic proactively, They do attack mitigations and remediations.. Post incident help also from AWS.. 
 
-
 =================
 
 
