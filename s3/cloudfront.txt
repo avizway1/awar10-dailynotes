@@ -1,0 +1,82 @@
+Amazon Cloudfront:  Its  CDN service (Content Delivery Network).. 
+Akamai, cloudflair.. 
+
+How it works
+
+1. user request
+2. intelligent routing
+3. Cache check
+4. Origin Fetch
+
+--> Cloudfront has a build-in feature to protect our resources from DDoS. 
+--> We can integrate with WAF (Web application Firewall)
+--> We can add S3 bucket as origin and deliver our static webiste using cloudfront. We can add ACM certificate.
+--> Lambda@Edge : This allows you to run lightweight code closer to users via lambda@edge option. 
+
+
+adhjbfsf8sfbsd.cloudfront.net --> Domain Name
+
+d220zwydn89i5q.cloudfront.net	--> index file --> road.html
+
+d220zwydn89i5q.cloudfront.net/firewall.MP4
+d220zwydn89i5q.cloudfront.net/ai.mov
+
+
+-----------
+
+Amazon SQS : Simple Queue Service : 
+
+
+Standard: Atleast-once delivery mechanism.. Message order wont be preserved.
+--> Best effort ordering
+--> At-least once delivery
+
+FIFO : First-in and First-out delivery.. Message order will be preserved.
+--> First-in and First-out
+--> Eaxctly once processing
+
+DLQ / Deal letter Queue : A dedicated queue designed to store undelivered messages.
+
+Max Msg retention period: 14 Days
+Maximum message size: 1024 KiB
+
+--> Service Decoupling
+--> ratelimiting
+--> Independent Scalability
+
+SQS is a poll based msg servcie. 
+
+poll : The consumer actively asks the provider for new data at regular intervals. 
+push : The provider automatically sends data to the consumer periodically.
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
