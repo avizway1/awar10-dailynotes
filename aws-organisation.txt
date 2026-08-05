@@ -1,0 +1,70 @@
+
+
+** DO NOT ENABLE THIS FEATURE (AWS ORGANISATIONS) IN YOUR FREE ACCOUNTS. YOUR ACCOUNT AUTOMATICALL  PROMOTES AS PAID ACCOUNT AND YOU LOSS ALL CREDITS.
+
+
+1. How will you manage the bill payment.?
+2. How can we have central permissions management.?
+3. How can we manage user authentication. across all the accounts.?
+
+
+Minimum 7 accounts:
+
+Sandbox / Training	: POC (proof of concepts / Testing a service)
+DEV					: Development (Initial Development)
+SQA					: Quality Assurance (Application tested here)
+UAT	/ Pre-Prod		: User acceptance testing (Replica of Production)
+Prod				: Production / Live Env / Users access this.
+Central Logging		: Stores all aws acocunt logs, We can provide access to monitoring tools / External auditors.
+Central Networking	: Central nw coponents i.e; Transit Gateway, VPC Endpoints
+Management Account	: organisation feature enabled account.
+
+
+Enable "AWS Organisation" in a Dedicated account. Add all other accounts as member accounts into the organisation.
+
+* The management acocunt cant be changed once it is created. 
+* We dont run any workload on this account.
+
+--> We get a centralised billing for all accounts in management account. 
+--> We can apply SCP (Service Control Polocies) for permissions management.
+--> We can integrate AWS Organisations with IAM identity center.
+--> The management account can't be changed after creating an organization
+
+
+If we want apply some permissions on set of aws accounts, You create OU (Organisational Unit).
+
+
+===========================
+
+IAM identity center : Central logging option for our Organisational accounts...
+--> We need to enable this in same account as AWS Organisation feature is enabled.
+
+
+https://avz.awsapps.com/start
+
+Identity source : Identity Center directory / Active Directory / External identity provider
+
+Permission Sets : Set of permissions, that we can apply at acocunt level in IAM Identity center.. We need to atatch this to User. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
