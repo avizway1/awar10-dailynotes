@@ -1,0 +1,41 @@
+
+
+
+Cognito: A fully managed identity management service. This service helps to add user sign-up, sign-in and access control to web and mobile applications.
+--> This eliminates complex backend logic building.
+
+UserPool: Act as user directories. It uses JWT Token for authetication (JSON Web Token - JWT).
+
+1. Authentication : Uses AWS generated Web UI.
+2. Token generation : The user pool validates the credentials and returns the JWT token.
+3. Authorization : Talking to application using token
+4. Access: provides the service access. 
+
+
+=====================
+
+API Gateway: Its a fully managed AWS servcie that allows developers to create, publish, maintain, monitor and secure APIs any scale.
+
+This act as traffic routing frontdoor for applications, accepting client requests and securely directing them t backend servcies i.e; lambda, ec2..
+
+
+HTTPS API : Modern serverless apps, microservices.. Low cost and low latency
+WebSocketAPI : Chat apps, multiplayer games, real time streaming.. Bidirectional connections..
+REST API : Enterprise grade apps that required proxy.. It supports apikeys, validations, web application forewalls..
+
+REST API: 
+
+
+
+
+https://9cf72grdbc.execute-api.ap-south-1.amazonaws.com/prod
+
+
+
+
+
+
+
+
+
+
