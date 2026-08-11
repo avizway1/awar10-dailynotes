@@ -1,0 +1,94 @@
+#Simple YAMl file
+fruit: apple
+color: red
+origin: simla
+
+---
+
+#List format for fruits (To define allowed ec2 instances / Allowed environments)
+fruits:
+  - apple
+  - banana
+  - mango
+  - papaya
+
+---
+
+#Flow style with above example
+
+fruits: [ apple, banana, mango, papaya ]
+
+---
+
+#Common data types in Cloidforamtion
+
+fruit: apple    #string
+price: 20       #Number
+in_stock: true  #Boolean
+
+---
+
+# Fruit attributes - Mappings
+fruit_details:
+  name: Apple
+  color: Red
+  taste: Sweet
+
+---
+#Collections
+
+fruits:
+  - apple
+  - mango
+  - kiwi
+  - banana
+apple:
+  color: red
+  price: 20
+  in_stock: true
+mango: 
+  color: red
+  price: 20
+  in_stock: true
+
+---
+
+#Nested format for multiple fruits
+
+fruits_details:
+  - name: apple
+    color: red
+    price: 20
+    in_stock: true
+  - name: mango
+    color: yellow
+    price: 30
+    in_stock: false
+  - name: banana
+    color: yellow
+    price: 10
+    in_stock: true
+fruits_origin: {apple: simla, mango: andhra, banana:africa}
+
+---
+
+fruits:
+  bestfruit: mango
+  healthyfruit: apple
+  budgetfruit: banana
+
+AvinashBasket:
+  FirstChoice: !Ref bestfruit
+  SecondChoice: !Ref budgetfruit
+  Thirdchoice: !Ref healthyfruit
+ShivaBasket:
+  FirstChoice: !Ref healthyfruit
+  SecondCHoice: !Ref budgetfruit
+  Thirdchoice: !Ref  bestfruit
+SumanBasket:
+  FirstChoice: !Ref healthyfruit
+  SecondCHoice: !Ref  bestfruit
+  Thirdchoice:  !Ref budgetfruit
+
+
+

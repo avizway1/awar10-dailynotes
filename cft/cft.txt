@@ -1,0 +1,50 @@
+
+
+IaC : Infrastructure as Code : 
+
+
+Cloudformation support 2 Prog lamguages
+
+1. JSON : Java script object notation : 
+2. YAML : YAML Ain't Markup Language : Indentation is matter with YAML
+
+
+Use an IDE : Visual STudio Code, Cursor, Kiro
+
+=========
+
+Cloudforamtion has 3 primary components:
+
+1. Resources : What do you want to create, you define here. *THis is mandatory
+2. Output : Pick and display the created resource information.
+3. Parameters : We can parameterise the repreated values. No need of hardcoading the values.
+
+service-provider::service-name::data-type-name
+
+AWS::S3::Bucket
+AWS::EC2::Instance
+
+aws cloudformation deploy --template-file s302.yaml --stack-name mys3withname
+
+aws cloudformation deploy --template-file s303.yaml --stack-name s3paracli --parameter-overrides BucketName=avinash.cli.awar10.cft
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
