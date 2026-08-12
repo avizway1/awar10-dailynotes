@@ -1,0 +1,71 @@
+Parameters:
+
+  Environemnt:
+    Type: String
+    Description: Choose your environment to deploy
+    Default: dev
+    AllowedValues:
+      - dev
+      - uat
+      - prd
+
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+
+  Keypair:
+    Type: AWS::EC2::KeyPair::KeyName
+
+  AvailabilityZone:
+    Type: String
+    Description: Choose your required AZ
+    Default: ap-south-1a
+    AllowedValues:
+      - ap-south-1a
+
+Mappings:
+  EnvToInstanceType:
+    dev:
+      InstanceType: t3.small
+    uat:
+      InstanceType: t3.small
+    prd:
+      InstanceType: m7i-flex.large
+
+Resources:
+  MySG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: My first SG
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+
+  MyFirstInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: "{{resolve:ssm:/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-6.18-x86_64}}"
+      InstanceType: !FindInMap [EnvToInstanceType, !Ref Environemnt, InstanceType]
+      KeyName: !Ref Keypair
+      AvailabilityZone: !Ref AvailabilityZone
+      SecurityGroupIds:
+        - !Ref MySG
+      Tags:
+        - Key: Name
+          Value: !Sub "mapping-changeset-${Environemnt}"
+
+Outputs:
+  MyEC2Id:
+    Value: !Ref MyFirstInstance
+    Description: My Instance id

@@ -28,7 +28,25 @@ aws cloudformation deploy --template-file s302.yaml --stack-name mys3withname
 
 aws cloudformation deploy --template-file s303.yaml --stack-name s3paracli --parameter-overrides BucketName=avinash.cli.awar10.cft
 
+========================
 
+D: 12/08/2026
+
+drift detection: We can identify the changes happened on the resources happened outside of the cloudformation.
+
+
+
+1. resource
+2. Resource + parameter
+3. Resource + Parameter + output
+4. data blocks
+5. dynamic block
+6. mapping
+7. retains
+8. drift detection
+9. changeset
+10. nested stack
+11. depends-on
 
 
 

@@ -89,6 +89,3 @@ SumanBasket:
   FirstChoice: !Ref healthyfruit
   SecondCHoice: !Ref  bestfruit
   Thirdchoice:  !Ref budgetfruit
-
-
-
