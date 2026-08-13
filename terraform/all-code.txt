@@ -1,0 +1,62 @@
+provider "aws" {
+  region = "ap-south-1"
+}
+
+resource "aws_instance" "myfirstserver" {
+  ami           = "ami-035827357e3c7e810"
+  instance_type = "t3.micro"
+  tags = {
+    Name = "myserver-${count.index + 1}"
+  }
+}
+
+resource "aws_s3_bucket" "mybucket" {
+  bucket = "aviz-awar10-terraform"
+}
+
+output "instance_public_ip" {
+  description = "The Pubic IP of the instance"
+  value       = aws_instance.myfirstserver.public_ip
+  sensitive   = true
+}
+
+output "instance_private_ip" {
+  description = "The Private IP of the instance"
+  value       = aws_instance.myfirstserver.private_ip
+}
+
+output "bucket_name" {
+  description = "The name of the S3 bucket"
+  value       = aws_s3_bucket.mybucket.bucket
+}
+
+
+========================
+
+meta-arguments.
+
+1. count
+
+provider "aws" {
+  region = "ap-south-1"
+}
+
+resource "aws_instance" "myfirstserver" {
+  count         = 2
+  ami           = "ami-035827357e3c7e810"
+  instance_type = "t3.micro"
+  tags = {
+    Name = "myserver-${count.index + 1}"
+  }
+}
+
+
+
+
+
+
+
+
+
+
+

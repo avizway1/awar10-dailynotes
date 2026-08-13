@@ -1,0 +1,116 @@
+
+
+
+Cloudformation: Support only AWS..
+Terraform : Cloud agnostic : AWS, Azure, Gcp..
+
+
+Terraform created by Mitchell Hashimoto in 2014.
+terraform developed in GO Language.
+originally developed by Hashicorp, Now acquired by IBM.
+
+Started as Open Source, now its a closed source with IBM.
+
+
+https://developer.hashicorp.com/terraform/install
+
+brew tap hashicorp/tap
+brew install hashicorp/tap/terraform
+
+
+Windows laptop: Download the file and unzip it. Create a folder in C:/ with name "terraform", Then move the data into c:/ drive.. "terraform.exe".. Then copy the path and add it as system variable. 
+
+
+cloudforamtion 			terraform
+-------------------------------------
+parameters				variables
+resource				resource
+output					output
+
+-----------
+
+provider: provider block automatically downloads the required plugin to interact with the cloud provider using local aws credentials.
+
+
+provider "aws" {
+  region = "ap-south-1"
+}
+
+
+terraform init					--> This will initialise the local folder as tf workspace.
+
+
+---------
+
+resources: 
+
+resource "tf-defined-resource-name" "webserver1" {
+ami=addsad
+instance_type=t3.micro
+}
+
+----
+
+terraform fmt				--> Run this command to get our code into proper allignment.
+terraform validate			--> Helps to identify the potential config errors/systnxes early state.
+
+terraform plan				--> Treat it as dryrun, tell us whats going to happend when we deploy this.
+
+* Always recommended to run plan before running apply. 
+
+
+terraform init
+terraform plan
+terraform apply
+terraform destroy
+
+f
+v
+
+i
+p
+a
+d
+
+---
+
+
+terraform apply --auto-approve
+terraform apply -auto-approve
+
+
+bucket_name = "aviz-awar10-terraform"
+instance_private_ip = "172.31.5.146"
+instance_public_ip = "13.233.75.25"
+
+terraform output
+terraform output -json
+
+https://registry.terraform.io/providers/hashicorp/aws/latest/docs
+
+
+----------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
