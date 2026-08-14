@@ -51,6 +51,155 @@ resource "aws_instance" "myfirstserver" {
 }
 
 
+=======================
+
+2. for_each
+
+provider "aws" {
+  region = "ap-south-1"
+}
+
+locals {
+  server_types = {
+    dev  = "t3.micro"
+    test = "t3.small"
+  }
+}
+
+resource "aws_instance" "myfirstserver" {
+
+  for_each = local.server_types
+
+  ami           = "ami-035827357e3c7e810"
+  instance_type = each.value
+  tags = {
+    Name = "${each.key}-server"
+    Environment = each.key
+  }
+}
+
+-----
+
+same configuration but, with different names
+
+provider "aws" {
+  region = "ap-south-1"
+}
+
+resource "aws_instance" "myfirstserver" {
+
+  for_each = toset(["dev-server", "uat-server", "prd-server"])
+
+  ami           = "ami-035827357e3c7e810"
+  instance_type = "t3.micro"
+  tags = {
+    Name = "${each.key}-server"
+  }
+}
+
+=================
+
+depends_on:
+
+provider "aws" {
+  region = "ap-south-1"
+}
+
+resource "aws_instance" "myfirstserver" {
+
+  ami           = "ami-035827357e3c7e810"
+  instance_type = "t3.micro"
+  tags = {
+    Name = "ec2-server"
+  }
+}
+
+resource "aws_s3_bucket" "myfirstbucket" {
+  bucket = "aviz.depends.demo"
+  depends_on = [aws_instance.myfirstserver]
+}
+
+================
+
+provider-block example:
+
+
+provider "aws" {
+  region = "ap-south-1"
+}
+
+resource "aws_instance" "mumbaiserver" {
+  ami           = "ami-035827357e3c7e810"
+  instance_type = "t3.micro"
+  tags = {
+    Name = "aviz6-server"
+  }
+}
+
+provider "aws" {
+  region = "ap-south-1"
+  alias  = "aviz6-account"
+  profile = "aviz7"
+}
+
+resource "aws_instance" "usaserver" {
+  provider     = aws.aviz6-account
+  ami           = "ami-035827357e3c7e810"
+  instance_type = "t3.micro"
+  tags = {
+    Name = "aviz7-server"
+  }
+}
+
+resource "aws_s3_bucket" "aviz6_bucket" {
+  provider = aws.aviz6-account
+  bucket = "aviz6-bucket"
+ }
+
+
+=======================
+
+
+Lifecycle - 
+Create before destroy:
+ignore-changes
+prevent_destroy
+
+---
+
+provider "aws" {
+  region = "ap-south-1"
+}
+
+resource "aws_instance" "mumbaiserver" {
+  ami           = "ami-01a00762f46d584a1"
+  instance_type = "t3.small"
+  tags = {
+    Name = "aviz6-server"
+  }
+  lifecycle {
+    create_before_destroy = true
+    ignore_changes        = [instance_type]
+    prevent_destroy       = true
+  }
+}
+
+resource "aws_s3_bucket" "aviz6_bucket" {
+  bucket = "aviz6-bucket"
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

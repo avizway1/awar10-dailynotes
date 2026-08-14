@@ -91,20 +91,36 @@ https://registry.terraform.io/providers/hashicorp/aws/latest/docs
 
 ----------
 
+D: 14/08/2026
+
+Terraform meta arguments, meta arguments are built-in configuration directives in Terraform that alter how resource, data source, or modules behave. 
+
+So primarily we have five meta arguments:
+1. count
+2. depends_on
+3. for_each
+4. provider
+5. life cycle
+	5.1 create_before_destroy
+	5.2 prevent_destroy
+	5.3 ignore_changes
 
 
+parallelism in terraform:
+
+So by default Terraform can create, update, and destroy resources concurrently to maximise the deployment speed. For that it has a parallelism limit: 
+it can perform 10 operations concurrently by default.
+
+We can adjust this by using `terraform apply --parallelism=3`. 
+
+---------
+
+To destroy only one particular resource from an entire template, we can use terraform destroy with the target option. 
+
+terraform destroy -target=aws_s3_bucket.aviz6_bucket -target=aws_s3_bucket.xyz
 
 
-
-
-
-
-
-
-
-
-
-
+=====================
 
 
 
