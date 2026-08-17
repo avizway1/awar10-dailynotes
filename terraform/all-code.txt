@@ -188,6 +188,107 @@ resource "aws_s3_bucket" "aviz6_bucket" {
   bucket = "aviz6-bucket"
 }
 
+===============================
+
+userdata to install commands inside ec2 instance
+
+
+provider "aws" {
+  region = "ap-south-1"
+}
+
+resource "aws_instance" "mumbaiserver" {
+  ami           = "ami-035827357e3c7e810"
+  instance_type = "t3.small"
+  vpc_security_group_ids = ["sg-01f2aff5e6ac57dc1"]
+  key_name = "awar11"
+
+  user_data = file("${path.module}/userdata.txt")
+
+  tags = {
+    Name = "Web-server"
+  }
+}
+
+
+=======================
+
+connection and remote-exec option to install commands inside ec2 instance
+
+ provider "aws" {
+   region = "ap-south-1"
+ }
+
+ resource "aws_instance" "mumbaiserver" {
+   ami           = "ami-035827357e3c7e810"
+   instance_type = "t3.small"
+   vpc_security_group_ids = ["sg-01f2aff5e6ac57dc1"]
+   key_name = "awar11"
+
+   connection {
+     type = "ssh"
+     user = "ec2-user"
+     private_key = file("/Users/avizway/Desktop/keypairs/awar11.pem")
+     host = self.public_ip
+   }
+
+   provisioner "remote-exec" {
+     inline = [
+       "sudo dnf install httpd -y",
+       "sudo systemctl start httpd",
+       "sudo systemctl enable httpd",
+       "echo '<h1>Hello from terraform remoteexec SSH option</h1>' | sudo tee /var/www/html/index.html"
+     ]
+   }
+
+   tags = {
+     Name = "Web-server"
+   }
+ }
+
+============================
+
+provider "aws" {
+  region = "ap-south-1"
+}
+
+terraform {
+  backend "s3" {
+    bucket       = "aviz.tfstate.awar10"
+    key          = "myprodstate/terraform.tfstate"
+    region       = "ap-south-1"
+    use_lockfile = true
+  }
+}
+
+resource "aws_instance" "mumbaiserver" {
+  count                  = 3
+  ami                    = "ami-035827357e3c7e810"
+  instance_type          = "t3.micro"
+  vpc_security_group_ids = ["sg-01f2aff5e6ac57dc1"]
+  key_name               = "awar11"
+
+  connection {
+    type        = "ssh"
+    user        = "ec2-user"
+    private_key = file("/Users/avizway/Desktop/keypairs/awar11.pem")
+    host        = self.public_ip
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "sudo dnf install httpd -y",
+      "sudo systemctl start httpd",
+      "sudo systemctl enable httpd",
+      "echo '<h1>Hello from terraform remoteexec SSH option</h1>' | sudo tee /var/www/html/index.html"
+    ]
+  }
+
+  tags = {
+    Name = "Web-server"
+  }
+}
+
 
 
 

@@ -122,6 +122,77 @@ terraform destroy -target=aws_s3_bucket.aviz6_bucket -target=aws_s3_bucket.xyz
 
 =====================
 
+D: 17/08/2026
+
+chnages happened outside of the terraform: 
+
+--> Do you just want to verify the changes happened outside terraform : terraform plan -refresh-only
+--> Verify the changes and accept the changes to terraform : terraform apply -refresh-only
+--> Wrong changes and revert back to original : terraform apply
+
+--> Recreate a resource (currupted/modified) : 
+terraform apply -replace		--> Replace everything
+terraform apply -replace="aws_instance.mumbaiserver"
+
+recreate : Delete the old one, then create a new one.
+
+-----
+
+TRACE			--> Captures almost everything - api, response, decision 
+DEBUG			--> API calls + info + warn + errors 
+INFO			--> General operational info & Warning & ERRORs
+WARN			--> Warning & Errors
+ERROR			--> Errors only
+
+export TF_LOG=TRACE
+export TF_LOG=WARN
+export TF_LOG=DEBUG
+export TF_LOG=TRACE
+export TF_LOG=ERROR
+
+unset TF_LOG
+
+export TF_LOG_PATH="tflogs.log"
+
+
+================================
+
+terraform init -migrate-state		: Migrate statefile from local to remote backend
+
+terraform state list				: list all resources in statefile
+
+terraform state show aws_instance.mumbaiserver		: Display resource info from state file
+
+
+we can forcefully remove the lock file: terraform force-unlock <lock-id>
+
+terraform force-unlock ea1ad1f6-f2ca-61c1-d7dc-a321dd6118fe
+
+
+----
+
+Below is the best practise checklist to maintain a Terraform state file:
+1. Always use a remote backend S3 for a team's project.
+2. Enable S3 versioning.
+3. Enable S3 bucket locking with governance or compliance mode.
+4. Enable `use_lockfile = true` to prevent concurrent changes from applying.
+5. Set `prevent_destroy = true` on resources including statefile storage s3 bucket.
+6. Block public access on the S3 bucket.
+7. One more important point: never ever manually edit the Terraform state file.
+
+--> Use "Terraform force-unlock" When we really want to unlock the file in emergency cases or in special scenarios. 
+
+
+
+https://wisprflow.ai/r?AVINASH1144
+
+
+
+
+
+
+
+
 
 
 
