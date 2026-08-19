@@ -555,43 +555,6 @@ resource "aws_instance" "mumbaiserver" {
 
 =============================
 
-provider : 
-
-
-When we perform `terraform init` the code will do four activities:
-1. Reads our "provider" / "required_providers" providers block.
-2. Downloads the provider plugin from the Terraform registry.
-3. Stores it in the .terraform/ folder.
-4. Creates a .terraform.lock.hcl file for version lock.
-
-project 
-main.tf
-.terraform/
-|	|_providers/
-|		|_ registry.terraform.io
-|				|_hashicorp/aws
-|						|_ 6.x.x
-.terraform.lock.hcl
-terraform.tfstate
-
-
-= 6.0.0				==> Exactly this version only
->= 6.0				==> THis version or higher
-<=6.0				==> This version or lower
-~> 6.0				==> 6.x only 		(not 7.x 8.x)
-~> 6.50				==> 6.50 and above 	(not 7.x)
->=5.0, < 6.0		==> any version between 5.0 and 6.0
-
-~> 6.0				==> 6.x only 		==> Most commonly used
-
-
-==> How we can upgrade the provider
-
-terraform init					==> Download / initialise the provider
-
-terraform init -upgrade			==> upgrade providers to latest allowed version
-
-=======
 
 
 terraform {

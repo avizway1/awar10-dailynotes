@@ -188,6 +188,139 @@ https://wisprflow.ai/r?AVINASH1144
 
 
 
+========
+
+provider : 
+
+
+When we perform `terraform init` the code will do four activities:
+1. Reads our "provider" / "required_providers" providers block.
+2. Downloads the provider plugin from the Terraform registry.
+3. Stores it in the .terraform/ folder.
+4. Creates a .terraform.lock.hcl file for version lock.
+
+project 
+main.tf
+.terraform/
+|	|_providers/
+|		|_ registry.terraform.io
+|				|_hashicorp/aws
+|						|_ 6.x.x
+.terraform.lock.hcl
+terraform.tfstate
+
+
+= 6.0.0				==> Exactly this version only
+>= 6.0				==> THis version or higher
+<=6.0				==> This version or lower
+~> 6.0				==> 6.x only 		(not 7.x 8.x)
+~> 6.50				==> 6.50 and above 	(not 7.x)
+>=5.0, < 6.0		==> any version between 5.0 and 6.0
+
+~> 6.0				==> 6.x only 		==> Most commonly used
+
+
+==> How we can upgrade the provider
+
+terraform init					==> Download / initialise the provider
+
+terraform init -upgrade			==> upgrade providers to latest allowed version
+
+==========
+
+D: 19/08/2026
+
+
+string 	: A single text values	: t3.micro
+number 	: A numeric value		: 3
+bool	: True or false			: true
+list	: Ordered collection of same type values	: ["t3.micro", "t3.small"]
+map		: key-value pair		: { Name= "myserver", env="dev", owner="xyz"}
+tuple	: Mix of different types	: ["dev", 3, true]
+
+
+1. CLI Flag				: terraform apply -var="instance-type=t3.small" 
+2. .tfvars				: terraform apply -var-file="dev.tfvars"
+3. environment var 		: export TF_VAR_instance-type="m5.xlarge"
+4. default value		: defined inside variables block.
+
+
+-----
+
+wheever we are dealing with multiple environments, we can use this tfvars files, to have a seperate configuration for every env.
+
+terraform apply -var-file="dev.tfvars"
+terraform apply -var-file="uat.tfvars"
+
+When we are managing multiple infrastructure environments, like dev, UAT, and production, it is not recommended to have the same state file for all the environments. One deploy can override another's resources. 
+
+----
+
+We can use Terraform workspaces. With this workspace every environment will have its own state files so that it won't mix up with environment to environment. 
+
+terraform workspace list
+
+terraform workspace new dev
+terraform workspace new uat
+terraform workspace new prd
+
+terraform workspace list		--> Shows all and desplays in which workspace we are in.
+
+terraform workspace select default
+
+---
+terraform workspace select dev
+terraform apply -var-file="dev.tfvars"
+---
+terraform workspace select uat
+terraform apply -var-file="uat.tfvars"
+---
+terraform workspace select prd
+terraform apply -var-file="prd.tfvars"
+
+---
+
+terraform workspace delete prd
+
+=================
+
+
+If we lost access to the terraform.tfstate file, we have an option to import existing resources and we can make our Terraform sync with the terraform.state file. 
+
+Import block example
+---------------------
+
+
+import {
+  to = aws_instance.mumbaiserver
+  id = "i-0647f2ef50ef11a7e"
+}
+
+resource "aws_instance" "mumbaiserver" {
+  ami                    = "ami-06a83a7a581c729a9"
+  instance_type          = "t3.micro"
+}
+
+
+===> terraform plan -generate-config-out=generated.tf
+
+terraform apply
+
+----------------------
+
+Method 2: CLI Import method
+
+grab the instance "ami_id" and 'Instance_type" and preapare a resource block
+
+terraform import aws_instance.existing_instance i-0647f2ef50ef11a7e
+terraform import aws_vpc.existing_vpc vpc-id
+
+================================
+
+
+
+
+
 
 
 
