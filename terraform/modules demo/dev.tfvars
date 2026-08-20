@@ -1,0 +1,5 @@
+ami_id        = "ami-0ac7b260cf76d8865"
+instance_type = "t3.small"
+name          = "dev-ec2"
+bucket_name   = "dev-testbucket-aviz.vartest"
+iamuser       = "dev-avinash"

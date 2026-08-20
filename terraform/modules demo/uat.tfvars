@@ -1,0 +1,5 @@
+ami_id        = "ami-0ac7b260cf76d8865"
+instance_type = "t3.micro"
+name          = "uat-ec2"
+bucket_name   = "uat-testbucket-aviz.vartest"
+iamuser       = "uat-avinash"
