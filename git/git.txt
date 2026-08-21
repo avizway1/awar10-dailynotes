@@ -80,7 +80,7 @@ git push
 
 
 
-
+git clone git@github.com:avizway1/mycode.git
 
 
 
