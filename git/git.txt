@@ -1,0 +1,96 @@
+
+
+pradeep - login				-- his laptop
+shiva - card				-- shiva laptop
+suneel - payment gateway	-- suneel laptop
+abhishek - recommendation
+ram - db
+
+git it is a version control system. It is a tool that records snapshots, meaning changes to our project over time, so we can review history. If we make any mistake we can undo it and we can collaborate with all other team members without overwriting each other's work. 
+
+
+1973	- SCCM - Source code control system - 1 file
+		  RCS - Revision control system 	- x files, 1 Directory
+		  CVS - Cuncurrent vesion system	- x file, x folders, 1 user
+2000	- SVN - Subversion					- x files, x folders, x users
+2005 	- GIT - Global Infroamtion Tracker	- x files, x folders, x users, branching, cherrypick.. 
+
+Original Author of Git : Linus Torvalds 
+
+https://git-scm.com/install/
+
+
+git config --list
+
+git config --global user.name "avizway1"
+git config --global user.email "avizway@gmail.com"
+git config --global core.editor "vim"
+git config --global --edit
+
+
+objects/		: Directory structures, File content in blobs, Commit histories, Tags stored here
+refs/			: stores pointers to commits
+hooks/			: It contains customizable scripts that get run automatically before or after commit or push operations. 
+logs/			: Keeps the history of changes that are happening on our repo.
+
+HEAD			: This points to the latest or current checkout branch or specific commit hash. 
+
+Traditional Git creates a branch with the name `master` but all the latest ones, like GitHub, GitLab, and Bitbucket, use the default branch name as `main`. 
+
+git branch -M main					--> Rename the branch from "master" to Main.
+
+git add .							--> Files moves to git staging area
+git add <file>
+
+git rm --cached index.html			--> Remove the file from staging
+
+
+git commit -m "initial landing page debelopement completed"
+
+git remote add origin git@github.com:avizway1/mycode.git
+
+git push --set-upstream origin main		(or) 	git push -u origin main
+
+
+==========================
+
+ssh authentication method:
+
+ssh-keygen -t ed25519 -C "avizway@gmail.com"
+
+/home/ec2-user/.ssh/id_ed25519
+
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+
+copy the content of the publickey and store it in github account. github settins --> ssh and gpg keys --> add the public key.
+
+
+ssh -T git@github.com
+
+-------------------------
+
+
+git add . 
+git commit -m "added login feature 2"
+git push
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
