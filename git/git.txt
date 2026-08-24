@@ -76,11 +76,86 @@ git commit -m "added login feature 2"
 git push
 
 
-
-
-
-
 git clone git@github.com:avizway1/mycode.git
+
+
+====================================================================================
+
+D: 24/08/2026
+
+clone : we can get a copy of our entire code to our local machine. Whenever any new team member joins our project, we ask them to clone the repository so that he can start working on that existing code. 
+
+pull : when multiple team members are working on the same repository, you want to get their changes locally so you can run the `git pull` command to get all the changes to your machine. This is very helpful whenever multiple members are working in a project. 
+
+Generally developers run this `git pull` command as the first thing before they start working for the day. 
+
+=========
+
+.gitignore : this file helps us not to commit sensitive information files or unwanted files into our central repository. 
+
+=========
+
+git log
+
+git log --oneline
+
+git diff <commit-id-1>..<commit-id-2>
+
+================
+
+TBD : Trunk Based Development: it is a GitHub Git development strategy. We generally don't work on the main branch directly. We always create a branch. We do all the changes in the branch. Once the feature development is completed we merge the code into the main branch 
+
+a version control management practice where all developers merge small, frequent updates into a single central branch, typically called the "trunk" or "main"
+
+
+git branch 	: Displays in which branch we are currently working. 
+
+
+git branch feature-x		: Creates a branch with the name `feature-x`. 
+
+git checkout feature-x		: Switch to featurex branch, traditional command. 
+git switch feature-x		: Switch to feature-x branch and this is a modern command. 
+
+git switch -c feature-x		: Create a branch and switch to that branch automatically. 
+git checkout -b feature-x	: Create a branch and switch to that branch automatically. 
+
+---
+
+Let's assume you and your friend both are writing a book and it has six chapters. You wrote three chapters and your friend wrote three chapters. 
+
+git merge : `git merge` brings all changes together. This is a very safe approach for a shared repo when multiple developers are working. 
+
+you wrote 3 chapters
+your friend wrote 3 chapters at sametime.
+you both decided to combine.
+--> If you merge, it shows as you arote 3 chapters and your wrote 3 chapters. 
+--> If keeps all original commit hashes. 
+
+
+git rebase : `git rebase` generally rewrites all the changes. It is not a recommended approach for shared repositories. This works best in our local commits. 
+
+you wrote 3 chapters
+your friend wrote 3 chapters at sametime.
+you both decided to combine.
+--> if we choose to go with rebase, it shows as you write 3 chapters first, then your frined wrote 3 chapters for clean and leniar history.
+
+ 
+echo "C1" >> main.txt && git add . && git commit -m "c1"
+echo "C2" >> main.txt && git add . && git commit -m "c2"
+echo "C3" >> main.txt && git add . && git commit -m "c3"
+
+
+git checkout -b feature HEAD~1
+
+
+echo "D" >> feature.txt && git add . && git commit -m "D in Feature branch"
+echo "E" >> feature.txt && git add . && git commit -m "E in Feature branch"
+
+
+git log --oneline --graph --all
+
+Thumb rule when working with rebase: never rebase a branch that has been pushed to a shared or public repo. For local development absolutely fine to use this rebase. For central or shared repositories always use `git merge`, as rebase cleans up the history and it may overwrite others' work. 
+
 
 
 
