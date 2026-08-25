@@ -156,6 +156,77 @@ git log --oneline --graph --all
 
 Thumb rule when working with rebase: never rebase a branch that has been pushed to a shared or public repo. For local development absolutely fine to use this rebase. For central or shared repositories always use `git merge`, as rebase cleans up the history and it may overwrite others' work. 
 
+=============================
+
+D: 25/08/2026
+
+git stash : To temporarily save uncommitted code changes without committing them. 
+
+You can assume a scenario where you are working on a feature and that feature development is half completed but your team member asked you to switch to a different branch to fix a mission-critical issue. You are in a situation where you cannot commit now but you need to switch to other branches to fix the critical bug. 
+
+echo "Commit-1 Feature 1 setup" >> C1.txt
+git add . && git commit -m "Commiting C1 feature"
+
+echo "Commit-2 Feature 2 setup" >> C2.txt
+git add . && git commit -m "Commiting C2 feature"
+
+echo "Commit-3 Feature 3 setup" >> C3.txt
+git add . 
+
+--> Not in position to commit the changes
+
+
+git stash					--> Stash the uncommited changes
+git stash show -p			--> Shows the stashed content	
+git stash push -m "msg"		--> Stash changes with a msg
+git stash list				--> List all stashed changes
+git stash apply				--> apply and keeps the stash
+git stash pop				--> apply and deletes the stash
+
+--------------
+
+
+cherry-pick: `git cherry-pick` is a command used to copy a specific commit from one branch and apply that in another branch. 
+
+echo "Commit-1 Feature 1 setup" >> C1.txt
+git add . && git commit -m "Commiting C1 feature"
+
+echo "Commit-2 Feature 2 setup" >> C2.txt
+git add . && git commit -m "Commiting C2 feature"
+
+echo "Commit-3 Feature 3 setup" >> C3.txt
+git add .  && git commit -m "Commiting C3 feature"
+
+
+git log --oneline
+
+git cherry-pick 
+
+--------------
+
+create a repo with your own name and it will appear on your github profile langing page.
+
+--------------
+
+We have options to host static applications in github. For hobby these tools are free. 
+--> vercel
+--> netlify
+--> AWS Amplify
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
