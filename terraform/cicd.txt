@@ -1,0 +1,5 @@
+step 1 : create a connection in AWS Code Pipeline to connect to GitHub. To fetch code from the specific repository, we use this connection. 
+
+step 2 : 
+
+

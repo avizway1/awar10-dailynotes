@@ -1,0 +1,19 @@
+Monolithic architecture : in monolithic architecture all software components are going to be bound together into a single unified codebase. 
+--> All or nothing, as a monolithic architecture deployed as one single unit.
+--> We can choose only one programming language to develop the entire application.
+--> If we have to scale we need to scale the entire application. We cannot scale only one feature. 
+--> In most cases we will have a centralised database for the entire application. 
+
+Microservices architecture: In general, microservice architecture is designed to break the entire application into smaller independent services that can communicate with each other to deliver the application. 
+--> Each service is completely independent. 
+--> We can scale services independently (more servers : frontend, less servers: payment)
+--> It's polyglot. We can choose the required or best programming languages per module.
+- For the frontend : Java
+- For rating : PostgreSQL database.
+- For user management : MySQL.
+- For recommendations : Python.
+
+==========
+
+
+
