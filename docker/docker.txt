@@ -111,6 +111,190 @@ docker inspect --format='{{.HostConfig.NanoCpus}}' nginx-limit
 -------
 
 
+Port Mapping: to access any container output that is running inside an EC2 instance, we have to map a host port to a container port. Then we can test the output via the EC2 instance-IP-address:port-number. 
+
+Make sure to open the required port numbers in the EC2 instance security group. 
+
+docker run -d --name mynginx -p <host-port>:<container-port> nginx
+
+docker run -d --name mynginx -p 80:80 nginx
+
+docker run -d --name mynginx1 -p 8080:80 nginx
+
+docker run -d --name mynginx2 -p 8888:80 nginx
+
+ss -tulnp	==> TO verify the port status inside an ec2 instance
+
+=================
+
+docker logs <contianer-id>/<container-name>			: Shows the container logs
+
+docker logs -f <container-name>						: Shows the container logs in realtime / live logs. **
+
+docker logs --tail 10 <container-name>				: Shows the container last 10 logs
+
+docker events										: stread live events happening
+
+docker top <container-id>							: Shows the processes inside contianer
+
+docker inspect <name/id>							: Inspect the configuration
+
+docker stats										: Shows contianers usage statistics
+
+================
+
+Copy files to/from container:
+
+docker cp ./index.html mynginx1:/usr/share/nginx/html/				: Copy local data to contianer
+
+docker cp <container-id>:/usr/share/nginx/html/index.html ./		: Copy data from contianer
+
+docker diff <container-id>											: Shows the file systemn changes
+
+================
+
+How to connect to a container.? 
+
+docker exec -it mynginx1 /bin/bash						: Connect to container using bash
+docker exec -it mynginx1 /bin/sh						: connect to container using sh
+docker exec -it mynginx1 sh
+
+docker exec mynginx1 ls -l /usr/share/nginx/html/		: Run a command inside container
+docker exec mynginx1 whoami
+docker exec mynginx1 ls
+
+docker exec -u root mynginx1 whoami						: Run command as a specific user
+
+================
+
+Docker volume : 
+
+Docker volume path: /var/lib/docker/volumes/
+
+docker volume inspect <volume-name>	
+
+docker volume ls					: Shows the existing volumes
+
+docker volume create my_data		: create a volume 
+
+data resides : /var/lib/docker/volumes/my_data/_data
+sudo cd /var/lib/docker/volumes/my_data/_data
+
+---
+
+Named Volume : create a volume first with your own name then you can use it. 
+
+docker run -d --name mynginx3 -v my_data:/usr/share/nginx/html -p 8888:80 nginx:latest
+
+
+run multiple containers with shared content: 
+
+docker run -d --name mynginx -v my_data:/usr/share/nginx/html -p 80:80 nginx:latest
+docker run -d --name mynginx1 -v my_data:/usr/share/nginx/html -p 8080:80 nginx:latest
+
+---
+
+Ananymous Volume : on the go, while you are creating a container, you can create a volume. It generates some random ID. 
+
+docker run -d --name mynginx4 -v /usr/share/nginx/html -p 8880:80 nginx:latest
+
+
+---
+
+There is another way that we can map a container. Everything is the same, just the syntax is different. 
+
+docker run -d -p 80:80 --mount source=my_data,target=/usr/share/nginx/html,readonly nginx:latest
+
+
+=============
+
+Bind Mount : we can directly mount one of the host machine's folders to a container. 
+This is not directly managed by Docker and it is not a volume. It is just a local folder. 
+
+docker run -d --name mynginx -v /home/ec2-user/mywebcontent:/usr/share/nginx/html -p 80:80 nginx:latest
+docker run -d --name mynginx1 -v /home/ec2-user/mywebcontent:/usr/share/nginx/html -p 8080:80 nginx:latest
+
+
+read only bind mount: whoever connected to the container cannot modify the data inside the mount. 
+
+docker run -d --name mynginx2 -v /home/ec2-user/mywebcontent:/usr/share/nginx/html:ro,z -p 8888:80 nginx:latest
+
+
+==============
+
+scenario: we have an image in server 1. We need to copy the image to server 2 and we don't have internet in server 1 and server 2 to push and pull from DockerHub. So how you can share.?
+
+docker save -o mynginx.tar nginx:latest				: Exporting image as tar file
+
+scp with private-ip to instance-2
+
+docker load -i mynginx.tar							: Import as image
+
+=============
+
+docker networking
+
+docker network ls									: Shows the exitsing networks
+
+bridge : Default network for contianer.. All containers get their own Virtual Network..
+Host : Contianer shares the host machiene network directly..
+None : No network at all.. 
+
+
+---
+Creating bridge network and running the contianers: 
+
+docker network create mycustomnw
+
+docker run -dit --name mynginx --network mycustomnw nginx:latest
+
+docker run -dit --name c1 --network mycustomnw alpine
+docker run -dit --name c2 --network mycustomnw alpine
+
+docker exec -it c1 /bin/sh
+ping c2
+ping mynginx
+ping mynginx2		--> wont work, as it is in diff network
+
+docker run -dit --name mynginx2 nginx:latest
+
+==========
+
+Bridge Mode: 
+1. Bridge mode will have its own IP addresses inside the Docker network.
+2. We can perform the port mapping to deliver the application.
+3. This is more isolated and secure. Your container won't be directly exposed to the network.
+4. This mode has a net component that helps to resolve the container IP addresses, so one additional hop is involved in the traffic flow.
+5. This is best for enterprise-grade and multi-container applications.
+6. This works on Linux, macOS, and Windows operating systems.
+
+Host Mode: 
+1. It shares the host IP address and port.
+2. Port mapping is not required. It directly uses the host IP address and port.
+3. Less isolated compared to bridge as it is directly exposed over the host network.
+4. Slightly faster compared to bridge as this has one hop less.
+5. We can use this specifically for a monitoring agent not to run over a regular workload.
+6. Works only on the Linux operating system.
+
+docker run -d --name host-test --network host nginx:latest
+docker run -d --name host-test2 --network host nginx:latest
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
