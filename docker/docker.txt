@@ -40,7 +40,6 @@ Why are organisations moving towards containers? Below are the points:
 
 Docker alternatives podman, containerd, cri-o, skopeo
 
-
 ---
 
 sudo dnf install docker -y
@@ -242,6 +241,7 @@ None : No network at all..
 
 
 ---
+
 Creating bridge network and running the contianers: 
 
 docker network create mycustomnw
@@ -278,6 +278,214 @@ Host Mode:
 
 docker run -d --name host-test --network host nginx:latest
 docker run -d --name host-test2 --network host nginx:latest
+
+==============================
+
+D: 02/09/2026
+
+Restart policies : We can contrl what happens when a container stops or the host reboot.
+
+always				: always restart, include on host reboot
+unless-stopped		: Similar to always, but not if manually stopped
+no					: never restart
+
+
+docker run -d --restart=always --name mynginx -p 80:80 nginx:latest
+
+docker run -d --restart=unless-stopped --name mynginx2 -p 8080:80 nginx:latest
+
+docker run -d --name mynginx3 -p 8888:80 nginx:latest
+
+
+always: we can use this option if we want the container running 100% of the time the host is on, no matter what action we took previously. 
+
+unless-stopped: this gives better control. If we intentionally stop a container to perform maintenance, like apply updates or troubleshooting, you don't have to wait for it to randomly wake back up because the EC2 instance rebooted. 
+
+							restart always				unless-stopped
+							
+1. Container crashed		retsart automatically		retsart automatically
+
+2. Host reboot 
+(container running)			retsart automatically		retsart automatically
+
+3. Host reboot				retsart automatically		stays stopped on boot
+(container manually stopped)
+
+
+Interviewer: we have a container that continuously monitors the host system. If the host restarts, the container should start automatically. It is designed to monitor the host usage or something. How would you configure this? 
+
+
+================================
+
+docker container prune			: clears all stopped containers
+
+docker image prune				: clears all dangling images (untagged images)
+docker image prune -a			: Clears all unused images
+
+docker network prune			: clears unused network
+docker volume prune				: clears unused volumes
+
+docker system prune -a			: Removes unused images, containers, networks
+docker system prune --volumes	
+
+docker rm -f $(docker ps -aq)	: Use with caution. It will stop and remove all cotnainers (running & stopped)
+
+==============================
+
+
+FROM		: Set the base image. This must be the first instruction in the Dockerfile.
+
+FROM alpine
+FROM ubuntu:latest
+FROM python:3.13.15-alpine
+FROM node:18
+FROM amazonlinux
+FROM redhat/ubi8:1787647348
+
+---
+
+RUN			: Executes the commands during the image build process
+
+RUN dnf update -y && dnf install nginx -y
+
+-> To follow best practises while writing a Dockerfile, if possible we have to reduce the layers. You can run multiple commands as a single layer. 
+
+---
+
+WORKDIR		: Set the working directory for all the commands we are going to execute below or in subsequent commands. 
+
+WORKDIR /app
+WORKDIR /usr/share/nginx/html/
+
+---
+
+COPY		: We can copy the files or directories from the host machine to the container. 
+
+COPY . .
+COPY src/ /app
+
+COPY <source-path> <cotnainer-path>
+
+---
+
+ADD 		: Similar to copy but it also supports ZIP files. Generally we use the "COPY" most of the time. 
+
+ADD mydata.tar.gz /app
+
+---
+
+CMD		: `CMD` sets the default command to run when the container starts. `CMD` will be overridden if we pass an argument while we are running the `docker run` command. 
+
+
+nginx["nginx","-g","daemon off;"]
+
+FROM amazonlinux:latest
+CMD["echo", "hello from AVINASH"]			--> We build and named it as "myapp"
+
+
+Not passing any arguments while we are running the image
+docker run myapp				: output : "hello from AVINASH"
+
+
+We are passing arguments while we are running the image, so it will override default argument:
+
+docker run myapp "Hello from ANUDEEP"	: output : "Hello from ANUDEEP"
+docker run myapp date					: output : "sep 2 2026"
+
+---
+
+ENTRYPOINT	: We can define a command that always runs even if we pass any argument when running the `docker run` command. 
+
+FROM amazonlinux:latest
+ENTRYPOINT["echo", "hello from AVINASH"]			--> We build and named it as "myapp"
+
+Not passing any arguments while we are running the image
+docker run myapp				: output : "hello from AVINASH"
+
+
+We are passing arguments while we are running the image:
+
+docker run myapp "Hello from ANUDEEP"	: output : Hello from AVINASH Hello from ANUDEEP
+docker run myapp date					: output : Hello from AVINASH sep 2 2026
+
+--> We can combine both:
+
+FROM python 3.13
+ENTRYPOINT["python"]
+CMD["app.py"]					--> We build this image and named as "python-app"
+
+docker run python-app			--> python app.py
+docker run python-app web.py	--> python web.py
+
+
+=========
+
+EXPOSE 		: We document which port the container is listening on. (This is not going to publish the port or open the port. We still need to pass -p to run our container). 
+
+EXPOSE 80
+EXPOSE 3000
+EXPOSE 5000
+EXPOSE 3306
+
+---
+
+USER		: sets the user for running container. It is very highly recommended to run any container as a non-root user to reduce the attack surface or to limit the user permissions. 
+All subsequent commands mentioned in the Dockerfile run with the user we set up now. 
+
+USER appuser
+
+---
+
+VOLUME		: We can create a mount point for shared data or persistent data. 
+
+VOLUME /var/lib/mysql/
+VOLUME /usr/share/nginx/html/
+
+---
+
+ENV			: We can set the environment variable. 
+
+ENV APP_ENV=uat
+ENV NAME=demoapp
+
+---
+
+LABEL		: We can add metadata to the image we are building, like i.e; maintainer, version.
+
+---
+
+SHELL		: We can change the default shell os base OS. 
+
+SHELL ["/bin/bash"]
+
+---
+
+HEALTHCHECK		: We can inform Docker about the container health so Docker can detect whether this container is running healthy or not by using the health check. 
+
+---
+
+ARG 		: we can define arguments during build process, not at runtime.
+
+---
+
+==============================================================================
+
+.dockerignore			: Similar to .gitignore we can mention the files or folders you want to ignore while you are building a Dockerfile. 
+
+.git
+.env
+node_module
+
+==============================================================================
+
+attendence tracker
+
+todo application
+
+ecommerce
+
+
+
 
 
 
