@@ -478,33 +478,127 @@ node_module
 
 ==============================================================================
 
-attendence tracker
+Build a sample To-DO list web application without using any database. 
 
-todo application
+Below are the requirements:
+1. Create, edit, and delete the to-do list.
+2. Each task should have:
+- Task title
+- Description (optional)
+- Due date
+- Current status
+3. Tasks should automatically have a status of pending.
+4. When we click a checkbox it should mark it as completed.
+5. Completed tasks should be placed or should be visually different from pending tasks.
+6. The user should be able to bring a completed task back to pending.
+7. Provide filters for all tasks, pending tasks, and completed tasks.
+8. Overdue is in 3 days. Highlight the overdue.
 
-ecommerce
+Technology: 
+nodejs
+Expressjs
+HTML/CSS/Javascript for frontend
+
+Storage: do not use any database for a persistent task. Use a simple JSON file like a "task.json" so the application can retain tasks after restarting. 
+
+Keep the application simple, clean, and beginner-friendly. 
+
+Do not add authentication, user accounts, or unnecessary features. 
+
+Finally provide: 
+1. Complete project structure
+2. All required source code
+3. Dockerfile
+4. How to run the application file
+5. task.json with example task
+6. API endpoints for creating, updating, deleting, and completing tasks
 
 
+====================
+
+Build docker image: 
+
+docker build -t todoapp .
 
 
+Docker Buildx is a powerful CLI plugin that extends the docker build command with full support for Moby BuildKit features. Its primary superpowers include building multi-architecture images
+
+docker login
+
+docker buildx build --push --platform linux/amd64,linux/arm64 -t avizway/todoapp:fromec2 .
+
+---
+
+docker pull avizway/todoapp
+
+=========================================================
+
+Install buildx inside amazon linux 2023
 
 
+ARCH=$([ "$(uname -m)" = "aarch64" ] && echo arm64 || echo amd64) && VER=$(curl -s https://api.github.com/repos/docker/buildx/releases/latest | grep -o '"tag_name": *"[^"]*"' | cut -d'"' -f4) && mkdir -p ~/.docker/cli-plugins && curl -sSL "https://github.com/docker/buildx/releases/download/${VER}/buildx-${VER}.linux-${ARCH}" -o ~/.docker/cli-plugins/docker-buildx && chmod +x ~/.docker/cli-plugins/docker-buildx
+
+docker buildx version
+
+2. Install QEMU for the foreign architecture: 
+
+docker run --privileged --rm tonistiigi/binfmt --install all
+
+3. Create a container builder. The default docker driver can't do multi-platform at all — you need the docker-container driver:
+
+docker buildx create --name multiarch --driver docker-container --use && docker buildx inspect --bootstrap
+
+4. Build and push
+
+docker login
+
+docker buildx build --push --platform linux/amd64,linux/arm64 -t avizway/todoapp:fromec2 .
+
+============================================================================================================
+
+Interview: you have a Dockerfile. The Dockerfile size is huge. You are asked to reduce the Dockerfile size. How will you reduce it? 
+1. Use minimal Base Image
+2. Implement Multi-stage builds
+3. add .gitignore
+4. Minimize the number of layers
+5. We can use 3rd party tool kits i.e; dive, slim toolkit
 
 
+=====================================
 
 
+Pre-req: Create an ECR repository.
+Launch an ec2 instance, make sure this instance is attached with an IAM role, and a policy with ecr permisisons. "AmazonEC2ContainerRegistryFullAccess"
 
 
+step 1 : authenticate with ECR service
 
+aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 992189742322.dkr.ecr.ap-south-1.amazonaws.com
 
+step 2 : build image.
 
+docker build -t ecrtodoapp .
 
+step 3 : add a tag with ecr repo URI
 
+docker tag ecrtodoapp:latest 992189742322.dkr.ecr.ap-south-1.amazonaws.com/ecrtodoapp:latest
 
+step 4 : push the image to ecr
 
+docker push 992189742322.dkr.ecr.ap-south-1.amazonaws.com/ecrtodoapp:latest
 
+==============
 
+Task 1 : 
+Generate a dockerfile for below programing languages
+1. java
+2. python
+3. nodejs
+4. go
+5. ruby
 
+Task 2 : Prepare an image and push it to DockerHub and ECR.
 
+============
 
 

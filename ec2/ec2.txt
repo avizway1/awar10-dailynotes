@@ -565,8 +565,6 @@ chmod +x web.sh
 
 D: 04/07/2026
 
-kubernetes : k8s
-
 Monitoring : CLoudwatch service monitors the resources. 
 Observability : o11y : SREs : It can look into the logs, identify the issue and verify the traces and alert if required.
 
