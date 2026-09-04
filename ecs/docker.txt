@@ -52,9 +52,9 @@ Task Execution role: A task execution IAM role is used by the container agent to
 
 Essential container: 
 
-YES: if a container is marked as failed or crashed, ECS immediately stops all other containers in the task and it will stop the entire task. 
+YES: if any container has failed in the task, the entire task will be marked as failed. All other containers will stop. 
 
-No: 
+No: if any of the containers has failed, the remaining containers work normally. The task won't stop. 
 
 
 
