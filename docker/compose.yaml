@@ -1,0 +1,36 @@
+services:
+  mydb:
+    image: postgres:latest
+    environment:
+        POSTGRES_USER: dbadmin
+        POSTGRES_PASSWORD: avinash123
+        POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/
+
+  mysqldb:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: root_secure_password
+      MYSQL_DATABASE: my_initial_db
+      MYSQL_USER: app_user
+      MYSQL_PASSWORD: user_secure_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysqldata:/var/lib/mysql
+
+  adminer:
+    image: adminer:latest
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mydb
+      - mysqldb
+
+volumes:
+    pgdata:
+    mysqldata:
+    

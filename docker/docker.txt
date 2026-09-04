@@ -601,4 +601,36 @@ Task 2 : Prepare an image and push it to DockerHub and ECR.
 
 ============
 
+Docker Compose : this option helps us to run multiple containers at a time using a single YAML file. 
+
+
+sudo mkdir -p /usr/libexec/docker/cli-plugins
+
+sudo curl -SL https://github.com/docker/compose/releases/latest/download/docker-compose-linux-$(uname -m) -o /usr/libexec/docker/cli-plugins/docker-compose
+
+
+sudo chmod +x /usr/libexec/docker/cli-plugins/docker-compose
+
+docker compose version
+docker compose up
+docker compose up -v
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

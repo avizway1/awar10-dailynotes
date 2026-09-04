@@ -1,0 +1,71 @@
+
+Container orchestration is the automated process of managing the lifecycle of containers—including deployment, scaling, networking, and load balancing—across a cluster of machines.
+
+k8s 
+ECS
+EKS : build on top of k8s
+
+
+Manual container management: With this option we need to create multiple copies manually. We need to scale manually. 
+With Orchestrator: it monitors our workload. It automatically heals the workload and also it automatically scales the workload. 
+
+=========================================
+
+ECS : Elastic Container Service: AWS-owned container orchestration service 
+
+1. ECR
+2. Cluster
+3. Task
+
+
+ECR : ECR is a fully managed container image registry service. We can securely store our container images, same as Docker Hub or OCI images. 
+Native AWS Integration: The advantage with ECR is that we can use an IAM role to pull images from various services like EC2, ECS, and EKS. 
+
+
+ECS Cluster : this is a place all of our workload is going to be scheduled to run or where our actual workload runs. 
+
+--> AWS Fargate: fully managed serverless compute provider. We just need to pay per usage, generally for vCPUs and memory per second. If we don't want to have underlying access to any of the OS-level components and if we are not thinking about creating and managing servers, then this Fargate is a great choice for us. 
+
+EC2 Launch Types: 
+	1. Managed Instances: AWS will manage the patching and scaling of these EC2 instances on our behalf while we give configuration about the instance size. 
+	2. Self Managed Instances: we must ensure the instance is patched and scaled. As it is a self-managed instance, it is our responsibility and we will have full control over the instance. 
+
+---
+
+Task : Container : this is similar to a container. It doesn't have auto-scaling and auto-healing capabilities. 
+
+Service : a service is nothing but a group of tasks. We can integrate these tasks with a load balancer and an auto-scaling group. If a task is down, the service will ensure that the other task will be created or replaced without any delays. 
+
+---
+
+Task Definition : we can define how much CPU we want to provide to a task, how much memory we want to provide to the task, and where the actual image is. Those all will be present in the task definition. 
+
+---
+
+docker = Container
+ecs = Task (wrapper around a container)
+K8s/ EKS = Pod (wrapper around a container)
+
+---
+
+Task Execution role: A task execution IAM role is used by the container agent to make AWS API requests on your behalf. Mainly pulls the image from ECR service. 
+
+Essential container: 
+
+YES: if a container is marked as failed or crashed, ECS immediately stops all other containers in the task and it will stop the entire task. 
+
+No: 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
