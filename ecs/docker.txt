@@ -13,10 +13,11 @@ With Orchestrator: it monitors our workload. It automatically heals the workload
 
 ECS : Elastic Container Service: AWS-owned container orchestration service 
 
-1. ECR
-2. Cluster
-3. Task
-
+1. ECR - Image
+2. Cluster - Server
+3. Task Definition - Task settings blueprint
+4. Task - Workload
+5. Service - LB Integration, ASG.. Desired count / zero downtime Deployment.. 
 
 ECR : ECR is a fully managed container image registry service. We can securely store our container images, same as Docker Hub or OCI images. 
 Native AWS Integration: The advantage with ECR is that we can use an IAM role to pull images from various services like EC2, ECS, and EKS. 
@@ -50,17 +51,22 @@ K8s/ EKS = Pod (wrapper around a container)
 
 Task Execution role: A task execution IAM role is used by the container agent to make AWS API requests on your behalf. Mainly pulls the image from ECR service. 
 
+Task Role: If our container want to access any of th aws services i.e; s3/dynamodb.. We can create a role and attach here.. 
+
+
 Essential container: 
 
 YES: if any container has failed in the task, the entire task will be marked as failed. All other containers will stop. 
-
 No: if any of the containers has failed, the remaining containers work normally. The task won't stop. 
 
 
+============================
 
 
+Container Insights with enhanced observability : Provides detailed health and performance metrics at task and container level in addition to aggregated metrics at cluster and service level. Enables easier drill downs for faster problem isolation and troubleshooting.
 
-
+Container Insights : Provides aggregated metrics at cluster and service level. You can run deep dive analysis with logs insights analytics.
+Turned off : Provides default CloudWatch metrics only.
 
 
 
