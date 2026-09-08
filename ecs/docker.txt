@@ -68,10 +68,52 @@ Container Insights with enhanced observability : Provides detailed health and pe
 Container Insights : Provides aggregated metrics at cluster and service level. You can run deep dive analysis with logs insights analytics.
 Turned off : Provides default CloudWatch metrics only.
 
+=============================
+
+Capstone on ECS: 
+
+1. Create a VPC with two public subnets and two private subnets, no NAT gateway, and an S3 endpoint.
+ 
+2. Create other additional endpoints to pull the ECR image from the repository to the task. For that we should have four endpoints:
+	- ECR DKR endpoint (Docker Registry)
+	- ECR API endpoint (Authentication)
+	- Logs (CloudWatch)
+	- S3 gateway endpoint  (image layers)
+	- ElasticFileSystem / EFS EP
+	- DynamoDB Endpoint
+
+3. Create EFS in our custom VPC to store all our web content and we are going to mount this to the /usr/share/nginx/html/ path. 
+
+3.1 create accesspoint for EFS
+
+aws efs create-access-point \
+  --region ap-south-1 \
+  --file-system-id fs-04a7d3955262bed26 \
+  --posix-user Uid=101,Gid=101 \
+  --root-directory 'Path=/site,CreationInfo={OwnerUid=101,OwnerGid=101,Permissions=0755}' \
+  --tags Key=Name,Value=todo-web-ap
 
 
+4. Prepare the dynamodb table to store the task information
+	Table Name: Tasks
+	Primary key: id		(string)
 
+5. Use the dockerfile, then build and push it to ECR service service
 
+6. Create 2 SGs for ECS tasks and EFS Service. 
+
+ELB-SG --> http:80, https:443 : Anywhere
+ECS-TASK-SG --> http: 80 --> Capstone-ELB-SG
+EFS-SG --> NFS: 2049 --> ECS-TASK-SG
+
+7. Create a Task Role and make sure to add DYNAMODB permissions on that role.. Also, Include ssmmessages permisisons for ecs-exec
+--> add efs-access also.
+
+8. Create task definition, make sure to add role, efs volume to the container.
+
+9. Create ECS Cluster, make sure to enable monitpring. 
+
+10. Create a Loadbalanacer and make sure to add http and https at listerner and atatch your domain name with ACM SSL Certificate. 
 
 
 
