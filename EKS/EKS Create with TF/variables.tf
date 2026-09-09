@@ -36,3 +36,9 @@ variable "desired_size" {
   type        = number
   default     = 2
 }
+
+variable "node_disk_size" {
+  description = "Root EBS volume size (GiB) for worker nodes. eksctl's default is 80; the EKS AMI default is 20."
+  type        = number
+  default     = 80
+}
