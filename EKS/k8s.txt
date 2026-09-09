@@ -1,0 +1,131 @@
+
+
+
+Google built this for its internal systems. This project's initial name is BORD. Later they renamed it as OMEGA. 
+
+In 2014 Google handed it to CNCF as an open source project. Then they named it Kubernetes / K8s. 
+
+
+CNCF : Cloud Native Computing Foundation. They manage open source projects. Anyone can contribute to this project: you, me, anyone. Generally they will have two types of projects:
+1. Graduated : a fully matured project that a large number of organisations are using 
+2. Incubated : still feature enhancement is going on. We may face some feature limitations. 
+
+K8s Architecture : 
+
+Conrol Plane : brain of K8s
+Data Plane : Hands of K8s
+
+
+1. CONTROL PLANE COMPONENTS : 
+
+1.1 kube-apiserver / apiserver : 
+--> This is the front door of Kubernetes. This is the single point of contact to communicate with the Kubernetes cluster. 
+--> If you want to deploy any workload, if you want to view the existing workload, or if you want to delete the existing workload, you communicate with the Kube API server by using "Kubectl". 
+--> KubeAPI server validates the configuration (pod, service, deployment). 
+
+kubectl apply -f file1.yaml  10 pods --> 
+kubectl apply -f file2.yaml
+kubectl create ns myapp
+kubectl delete ns myapp
+
+1.2 etcd (etc distributed) : (tradiitonal linux hasve its all config in /etc they picked same and k8s works across nodes so, they add d - distribution) 
+- ETCD contains all the information about a Kubernetes cluster, its configuration, and its workload.
+- In ETCD all the information is stored in key-value pairs.
+- Treat ETCD as the Kubernetes full-fledged database.
+- It stores the current and desired state of the cluster.  5 pods existing --> 5 new pods
+- If we lose access to etcd, our cluster state is lost. 
+- STRICT COMMUNICATION : no component in Kubernetes speaks to etcd directly except the API server. Everything else (scheduler, controller manager) goes through the API server to read and write data. 
+
+
+1.3 kube-scheduler : 
+- It looks for an available worker node to run our workload based on node resource utilisation, like CPU or memory. 
+- When it wants to run the pod, it will pick the best node to run our workload. 
+
+1.4 Kube-Controller-Manager : 
+- Kube-Controller-Manager acts as a supervisor.
+- This firstly monitors "etcd" and ensures our application's current state matches the desired state.
+- If we ask for 10 replicas and only 5 are running, it sends instructions to kube-scheduler to pick the node.
+- Kube-Controller-Manager runs in the background in a loop. It always checks with etcd and makes sure the desired state matches the actual state.
+
+1.5 Cloud-Controller-maneger: this will extend Kubernetes capabilities to cloud resources to utilise IAM roles, VPC, load balancers, EFS, and EBS components. 
+
+
+2. DATA PLANE / WORKER NODE : 
+
+2.1 kubelet : 
+- Kubelet is an AGENT that runs in every worker node. 
+- Kubelet listens to all the control plane instructions and ensures our containers (described in the pod) are running and healthy. 
+- If any container goes down, kubelet will restart it automatically. 
+
+2.2 kubeproxy : 
+- Kube-proxy is a networking component. This also runs on every node, similar to kubelet. 
+- Kubeproxy assigns an IP address to every pod created on the worker node. 
+- The primary purpose is to handle network communications inside and outside of the cluster. Kube-proxy ensures traffic reaches the right container. 
+
+2.3 container runtime : 
+- Container runtime is responsible for pulling images and running containers. 
+- k8s uses containerd / CRI-O as runtime from version 1.24. (earlier used docker)
+- Kubelet sends instructions to the container runtime to pull the image and start the container inside the pod. 
+
+
+==========
+
+EKS (Elastic Kubernetes Service): This is an AWS fully managed Kubernetes service. AWS takes care of all the control plane components. 
+
+For high availability and fault tolerance, AWS maintains multiple copies, at least six copies across three availability zones, which will be maintained or managed by AWS.
+
+Limitations:
+- We cannot access control plane nodes.
+- We don't get the option to see where those control plane nodes are running.
+
+Amazon EC2 Managed Node Group : **
+- AWS automatically provisions and configures managed instances. 
+- We need to handle the scaling. We have the option to choose the right-sized EC2 instances. 
+- On our behalf AWS will manage the patching and scaling of the instances. 
+
+Amazon EC2 Self managed Node group : 
+- We manually need to provision and configure the EC2 instances. 
+- We need to handle the scaling, OS operations, and security patches. 
+
+EKS AutoMode : AWS automatically picks the specific configuration of EC2 instances and it costs us very, very little as AWS uses mostly its unused EC2 instances. 
+
+AWS Fargate : this is a serverless: no worker nodes to manage. Our pods are going to run directly. It is very little used as we have limitations: resource limitations and compliance issues, compliance requirement issues. 
+
+=================
+
+Pre-Requisites:
+
+1. AWS CLI Tools should be installed and configured in our laptop.
+2. kubectl : Install kubectl to communicate with terrafrom from our laptop.
+3. eksctl must be installed
+
+
+1. console creation : complex, not at all easy
+2. eksctl : AWS tool to create the infrastructure along with the network roles with our defined configurations.
+3. terraform : use Terraform to create an EKS cluster and whoever uses Terraform widely uses the Terraform EKS module. 
+
+
+---
+
+Ekscluster creation using eksctl:
+
+pre-req: eksctl must be installed
+
+eksctl create cluster --name ekswithavinash2 --version 1.35 --region ap-south-1 --zones=ap-south-1a,ap-south-1b --nodegroup-name myeksnodes --nodes 2 --nodes-min 1 --nodes-max 4 --node-type c7i-flex.large --node-ami-family=AmazonLinux2023 --managed
+
+---
+
+eks cluster cretaion using terraform:
+
+pre-req: terraform must be installed.
+
+refer the shared code and create eks cluster.
+
+---
+
+
+
+
+
+
+
