@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mynginx
+  annotations:
+    kubernetes.io/change-cause: "Updating replica count to 6"
+spec:
+  replicas: 6
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      labels:
+        app: myapp
+    spec:
+      containers:
+      - name: myfirstcotnainer
+        image: nginx:1.31.5
+        ports:
+        - containerPort: 80
