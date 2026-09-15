@@ -1,21 +1,28 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mynginx
+  name: mynginx-withlimit
   # annotations:
   #   kubernetes.io/change-cause: "Updating replica count to 6"
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: myapp
+      app: myapp-wl
   template:
     metadata:
       labels:
-        app: myapp
+        app: myapp-wl
     spec:
       containers:
       - name: myfirstcotnainer
         image: nginx:1.31.5
         ports:
         - containerPort: 80
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+          requests:
+            memory: "64Mi"
+            cpu: "100m"          

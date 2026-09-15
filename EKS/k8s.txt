@@ -36,7 +36,6 @@ kubectl delete ns myapp
 - If we lose access to etcd, our cluster state is lost. 
 - STRICT COMMUNICATION : no component in Kubernetes speaks to etcd directly except the API server. Everything else (scheduler, controller manager) goes through the API server to read and write data. 
 
-
 1.3 kube-scheduler : 
 - It looks for an available worker node to run our workload based on node resource utilisation, like CPU or memory. 
 - When it wants to run the pod, it will pick the best node to run our workload. 
@@ -278,6 +277,89 @@ kubectl rollout undo deployment/mynginx --to-revision=1
 kubectl rollout status deployment/mynginx
 
 kubectl rollout restart deployment/mynginx
+
+
+================================================================================
+
+D: 15/09/2026
+
+Resource Limiting : we can define how much memory and CPU should be allocated to the container. If we don't define this value how much memory or CPU available on the underlying host will be allocated to the container.
+
+kube-scheduler uses the allocated resource values to find the appropriate cluster node. If no node has enough capacity, the pod won't be scheduled. It will be in a pending state only. 
+
+Requests : Guranteed Minimum : The Minimum CPU/Memory K8s guarantees to allocate to container.
+Limits : Hard Ceiling : The MAXIMUM CPU/memory a contianer is permitted to consume/allocated. This prevent a single container to consume all the resources. 
+
+Memory : 
+Megabytes: M
+Mebibytes: Mi
+
+CPU Measured in millicores / cores:
+1000m : 1 vCPU
+250m  : 0.25 CPU ( 25% of 1 CPU)
+
+
+kubectl top pods					--> Shows the pods list using usage
+kubectl top nodes			
+
+kubectl describe pod mynginx-854864cc7c-qpbxg
+kubectl describe pod mynginx-withlimit-9b9cd9d66-4zfsg
+
+--------
+
+Service : services act as a stable network abstraction over an ephemeral group of pods. Parts will be regularly created and destroyed. Their IP addresses are not constant. 
+
+1. ClusterIP (Default) : Cluster IP exposes the services with an internal IP address within the cluster. 
+
+--> Works only internally within the cluster.
+--> CLusterIP creates a stable IP address, but this IP works only within the cluster.
+--> Treat it as "Internal Load Balancer" / "Intercom Systems".
+
+To test the output in our local laptop, We need to perform port-forward:
+
+kubectl port-forward svc/cip-service 8080:80
+
+** All internal services will be configured to communicate with cluster IP only. 
+
+---
+
+To get output directly from a pod for testing purposes: 
+
+kubectl port-forward pod/mynginx-854864cc7c-pn22b 8080:80
+
+---
+
+2. NodePort : NodePort builds on top of ClusterIP by opening a static port on every node's IP address. 
+
+Port Range : 30000 - 32767
+
+NodePort has specific range to map at node level (30000 - 32767).
+We can choose a port manually. If we don't choose, the system will pick automatically. 
+We can deliver output to the outside world by using the node IP address. 
+The random port needs to be opened at the EC2/Node security group level. 
+
+We can deliver output to the outside world but via node IP address. It is a superset of cluster IP. For local developments we use this not at production level. 
+
+---
+
+LoadBalancer : 
+
+With the help of Cloud Controller Manager, Kubernetes will create a load balancer in an AWS environment. It creates a classic load balancer. (AWS stopped supporting  but for very quick tests we can use this.) 
+
+---
+
+ExternalName : It does not route traffic or it won't use a label selector to target pods. Instead, it maps an internal k8s service name to an external DNS name. 
+
+--> It simply creates a DNS alias. 
+--> It doesn't create a ClusterIP / proxy the traffic or use a LoadBalancer. 
+
+---
+
+
+
+
+
+
 
 
 
