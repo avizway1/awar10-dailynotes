@@ -353,7 +353,51 @@ ExternalName : It does not route traffic or it won't use a label selector to tar
 --> It simply creates a DNS alias. 
 --> It doesn't create a ClusterIP / proxy the traffic or use a LoadBalancer. 
 
+==================================
+
+D: 16/09/2026
+
+Problem 1 : If multiple teams use the same label, their work will be overridden. 
+Problem 2 : when multiple teams are using the same cluster, one particular team may use more resources and the other team may not get enough resources. 
+
+
+Namespace : helps to manage our workload with logical isolation. 
+
+default : This is a default namespace picked by our workload if we don't specify any namespace in our manifest file.
+
+kube-system : In Kubernetes all the internal infrastructure workloads will be deployed and run here. We do not modify, delete, or deploy our regular workload in this Kube system. 
+ 
+kube-node-lease : this namespace acts as a health heartbeat tracker. It manages the node heartbeat to track the node availability within our cluster.   
+
+kube-public : this namespace is readable by anyone even without authentication. We don't deploy any workload here. 
+
+
+kubectl get pods -n kube-system				--> Shows pods from kube-system namespace
+kubectl get all -n kube-system
+
+kubectl get all -A
+kubectl get pods -A
+
+
+kubectl config set-context --current --namespace=myapp		: Sets my app as the default namespace. If you run this once you no longer need to pass `-n myapp` along with all other commands. 
+
 ---
+
+Address problem 2 : one team is allocating more and more resources to their workload. We want to limit them to specific limits. 
+
+Apply limitranges at workload.. Workload will schedule in the namespace, when its within the limit. 
+
+---
+
+ResourceQuotas: to restrict the total CPU and memory consumption across the entire namespace, we can use resource quotas. This acts as a hard ceiling. Once the sum of all parts in the namespace hits the limits, Kubernetes will prevent new pod creation. 
+
+================
+
+alias kgp='kubectl get pods'
+alias kgn='kubectl get namespace'
+alias kgs='kubectl get service'
+
+================
 
 
 

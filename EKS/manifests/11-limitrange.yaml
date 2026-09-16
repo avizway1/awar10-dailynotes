@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: LimitRange
+metadata: 
+  name: myapp-limit
+  namespace: myapp
+spec: 
+  limits:
+  - type: Container
+    default:          #If we don't define any LIMITS at the container level, this will be picked. 
+      cpu: "1"        #Max CPU contianer gets
+      memory: "1Gi"   #max memory container gets
+    defaultRequest:   #If we don't define any REQUESTS at the container level, this will be picked. 
+      cpu: "0.5"      #Default CPU we get, if we dont define REQUESTS at container level
+      memory: "512Mi"   #Default memory we get, if we dont define REQUESTS at container level

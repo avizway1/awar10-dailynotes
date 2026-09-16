@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: myapp2
+
+#kubectl create ns myapp
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mynginx
+  namespace: myapp2
+  # annotations:
+  #   kubernetes.io/change-cause: "Updating replica count to 6"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      labels:
+        app: myapp
+    spec:
+      containers:
+      - name: myfirstcotnainer
+        image: nginx:1.31.5
+        ports:
+        - containerPort: 80
