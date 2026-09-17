@@ -399,6 +399,101 @@ alias kgs='kubectl get service'
 
 ================
 
+D: 17/09/2026
+
+Daemonsets: this will ensure exactly one copy of a specific pod runs on every single worker node we have in our EKS cluster. 
+--> If we add a new node to the cluster, a new node will get a daemon set automatically. 
+--> This is commonly used for monitoring tools, log exports, or network traffic filters at the node level. 
+
+We don't run our regular workload with daemon sets. We use deployments to run our regular workload. 
+When we are using a deployment we can define how many replicas we want but when working with a daemon set it picks the same node count. 
+
+=============
+
+pv : Persistent Volume : Storage resources in our cluster or AWS service (example: EBS, EFS) 
+pvc : Persistent Volume Claim : a request for storage against the PV.
+
+By default all pods get ephemeral storage. Data will be deleted along with the pod. 
+
+pod --> pod needs the storage --> PVC (Request) --> PV (Actual Storage) --> EBS/EFS
+
+
+Provisionin options:
+Dynamic Provisioning : We can create only PVC. It uses addl helper "StorageClass" to build the storage.
+Static Provisioning : We need to create PV and PVC explicitly to get the storage.
+
+AccessModes on Storage: 
+RWO : ReadWriteOnce : EBS (gp2, gp3, io1, io2) : One node can read/write.
+RWX : ReadWriteMany : EFS : Multiple Nodes can read/write
+ROX : ReadOnlyMany : Multiple Nodes can read
+
+
+Step 1 : Approve OIDC Provider
+
+eksctl utils associate-iam-oidc-provider --region ap-south-1 --cluster ekswithavinash --approve
+
+Step 2 : Create IRSA - IAM Role for Service Account
+
+kubectl get sa -A
+
+eksctl create iamserviceaccount --name ebs-csi-controller-sa --namespace kube-system --cluster ekswithavinash --region ap-south-1 --attach-policy-arn arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy --approve --override-existing-serviceaccounts
+
+We can run describe sa command to know the iam role creates
+
+kubectl get sa ebs-csi-controller-sa -n kube-system
+
+Step 3 : Install EBS CSI Driver
+
+eksctl create addon --name aws-ebs-csi-driver --cluster ekswithavinash --force
+
+---
+
+CSI : Container Storage Interface : this is a plugin that helps to extend Kubernetes storage to EBS or EFS services. 
+
+---
+
+Immediate: when PVC is created, it creates volume.
+WaitForFirstConsumer : Storage creates when a pod uses the pvc.
+
+==========
+
+Stateless : Every single request will be treated as brand new and isolated. It wont remeber the past actions (Just like NACL in VPC)
+
+Statefulsets: Rememebees the past.. It saves the data about the identity and past actions.. It keeps hiostory.. (Just like Security groups in VPC/EC2)
+
+Statefulsets: 
+--> Persistent Storage
+--> We get stable network identity (mydb-0, mydb-1, mydb-2)
+--> Creation and deletion happens follows an order.
+
+StatefulSet has a prerequisite: it needs a headless service. 
+
+Headless service: when we set `cluster IP` to `none`, it creates a headless service. A headless service gives each pod its own DNS name. This name or identity will be used by stateful sets. 
+
+=======
+
+kubectl exec -it mysql-0 -- mysql -uroot -psecret123
+
+CREATE DATABASE storagetest;
+USE storagetest;
+
+CREATE TABLE students (id INT PRIMARY KEY, name VARCHAR(20));
+INSERT INTO students VALUES (1, 'Avinash'), (2, 'Anudeep'), (3, 'Aravind');
+
+SELECT * FROM students;
+
+---
+
+kubectl delete pod mysql-0
+
+---
+
+kubectl exec -it mysql-0 -- mysql -uroot -psecret123 -e "SELECT * FROM storagetest.students;"
+
+=========
+
+
+
 
 
 

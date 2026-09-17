@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: efs-demo-app
+  annotations:
+    kubernetes.io/change-cause: "updating to newer version"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: efs-demo
+  template:
+    metadata:
+      labels:
+        app: efs-demo
+    spec:
+      containers:
+      - name: myfirstcontainer
+        image: nginx
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: efs-storage
+          mountPath: /usr/share/nginx/html
+      volumes:
+      - name: efs-storage
+        persistentVolumeClaim:
+          claimName: efs-pvc
