@@ -1,0 +1,63 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: myapp-config
+data:
+  DB_USERNAME: "anudeep"
+  DB_PORT: "3306"
+  DB_ENV: "Production"
+
+#kubectl create configmap app-config --from-literal=DB_USERNAME=dbadmin --from-literal=DB_PORT=3306
+---
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: cm-test-pod1
+spec:
+  containers:
+  - name: myfirstcontainer
+    image: busybox
+    command: ["sh", "-c", "echo The DB username is $DB_USERNAME && echo The DB port is $DB_PORT && echo The DB environment is $DB_ENV && sleep 3600"]
+    envFrom:
+    - configMapRef:
+        name: myapp-config
+
+---
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: cm-test-pod2
+spec:
+  containers:
+  - name: myfirstcontainer
+    image: busybox
+    command: ["sh", "-c", "echo The DB username is $DB_USERNAME && sleep 3600"]
+    env:
+    - name: DB_USERNAME
+      valueFrom:
+        configMapKeyRef:
+          name: myapp-config
+          key: DB_USERNAME
+---
+
+#Above 2 examples ENV Var, once injected, it will be same untill you manually edit by coinnectinv to the pod. Or Delete the pod and recreate.
+#Below example CM, mounted as volume, it resync for every 60 seconds, so updated values will reflect.
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: cm-test-pod3
+spec:
+  containers:
+  - name: myfirstcontainer
+    image: busybox
+    command: ["sh", "-c", "echo The DB username is $DB_USERNAME && sleep 3600"]
+    volumeMounts:
+    - name: config-volume
+      mountPath: /etc/config/
+  volumes:
+  - name: config-volume
+    configMap:
+      name: myapp-config

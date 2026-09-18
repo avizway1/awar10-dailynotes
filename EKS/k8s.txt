@@ -492,6 +492,69 @@ kubectl exec -it mysql-0 -- mysql -uroot -psecret123 -e "SELECT * FROM storagete
 
 =========
 
+D: 18/09/2026
+
+step 1 : Attach EFSCSIDriver policy to the eks nodes IAM Role. 
+
+Step 2 : Enable efs-csi-driver addon on EKS cluster. 
+
+Step 3 : create Storage class and PVC.
+
+Step 4 : Deploy Deployment and Service. Connect to one of the pod and create data. 
+** Mount efs to one of the instance and create/copy the required data.
+
+kubectl exec -it pod/efs-demo-app-845bd484fd-q4kb4 --
+ /bin/sh
+ 
+cd /usr/share/nginx/html/
+
+echo "<h1> Hello from EFS and this is shared storage</h1>" > index.html
+echo "<h2> This is from EFS </h2>" >> index.html
+
+
+kubectl delete pods efs-demo-app-845bd484fd-q4kb4 efs-demo-app-845bd484fd-zw9kb
+
+==========================
+
+ConfigMap : To store non-sensitive configuration we can use Configmap..
+
+Configmap = Parameter Store
+Sectets = AWS Secrets manager
+
+
+Question: You created a ConfigMap and this is used by some of the pods, later you updated ConfigMap value, Will it take effect immediately.?
+Ans: No.. We need to perform deployment rollout to take it effect.. If we are using individual pod, we need to delete and recrate to fetch the new values. 
+
+---
+To access values of CM, once it is mounted to a directory
+
+kubectl exec -it pod/cm-test-pod3 -- cat /etc/config/DB_USERNAME
+kubectl exec -it pod/cm-test-pod3 -- cat /etc/config/DB_PORT
+
+Wait for a minute and it will take effect if we choose volume mount option..
+
+
+Environment variables are injected once, when the container process starts. Nothing in Linux can change an already-running process's environment from outside, so pods-1 and pod-2 are stuck with avinash until you delete and recreate them. 
+
+Volume-mounted pod3 updates on its own. kubelet re-syncs mounted ConfigMaps on its periodic loop — roughly every 60s, up to ~2 min worst case.
+
+==========================
+
+Secrets : To store senstitive information i.e; pwd, token, Webhook-urls..
+
+K8s secrets are stored in BASE64 ENCODED Model.. We can easily decode it. At enterprise level, lot of org, uses HCP Valut / AWS Secrets manager to store sensitive info over K8s Secrets..
+
+echo -n 'hi' | base64			--> To encode
+echo 'aGk=' | base64 --decode	--> To Decode
+
+kuebctl get secrets
+kubectl get secret db-secret -o jsonpath='{.data.DB_USERNAME}' | base64 --decode
+kubectl get secret db-secret -o jsonpath='{.data.DB_PASSWORD}' | base64 --decode
+
+kubectl exec -it pod/secret-test-pod3 -- cat /etc/secrets/DB_USERNAME
+kubectl exec -it pod/secret-test-pod3 -- cat /etc/secrets/DB_PASSWORD
+
+=======================
 
 
 
