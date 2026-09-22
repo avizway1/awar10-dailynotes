@@ -557,6 +557,63 @@ kubectl exec -it pod/secret-test-pod3 -- cat /etc/secrets/DB_PASSWORD
 =======================
 
 
+Helm : Helm is a package manager for k8s. Its is similar to yum/dnf of Linux Operating System.
+
+chart : Package of complete resources.
+Repository : You can find helm repos at https://artifacthub.io/.
+release : A version of our application.
+Values : We can store configurable values in this file. same as variables.tf (in terraform) / parameters (in cloudformation).
+
+Install helm in your laptop: 
+https://helm.sh/
+
+run "helm version" to know installed version.
+
+TO pull helm charts, login/authenticate with dockerhub. 
+
+docker login
+
+helm repo list
+helm repo update
+
+helm search repo <chart>
+
+helm repo add <repo-name> <repo-url>
+
+helm repo add bitnami https://charts.bitnami.com/bitnami
+
+helm pull bitnami/nginx --version 25.1.14 --untar			--> Pulls the chart and unzip
+
+helm install my-nginx bitnami/nginx --version 25.1.14
+
+helm install my-nginx bitnami/nginx --version 25.1.14 --dry-run
+
+helm install my-nginx2 bitnami/nginx --version 25.1.14 --set replicaCount=3
+
+helm upgrade my-nginx2 bitnami/nginx --version 25.1.14 --set replicaCount=3 --description "updated pod count to 4"
+
+helm upgrade my-nginx2 bitnami/nginx --version 25.1.14 --set replicaCount=5 --description "updated pod count to 5"
+
+helm history my-nginx
+helm history my-nginx2
+
+helm rollback my-nginx2 2
+
+helm lint 
+
+helm status my-nginx2
+
+helm install nginx-local <local-path>
+helm install nginx-local nginx
+
+chart.yaml 	--> Chart metadata
+values.yaml --> Default configuration for our application
+templates/	--> K8s YAML templates
+
+
+helm uninstall my-nginx2
+
+helm create nodejs
 
 
 
