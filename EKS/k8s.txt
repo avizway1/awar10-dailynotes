@@ -613,7 +613,143 @@ templates/	--> K8s YAML templates
 
 helm uninstall my-nginx2
 
-helm create nodejs
+helm create nodejs2
+
+================================================================================
+
+D: 23/09/2026
+
+IRSA : IAM Role for Service Account.. 
+
+Pods cannot directly assume the IAM ROle.. It need Service accounts in K8s..
+
+Similar, How we associate IAM role to an ec2 instance, same manner, we can use IRSA for pods.. 
+
+   pod 
+ 	|
+ 	|
+ 	V
+Service Account
+ 	|
+ 	|
+ 	V
+  IAM Role
+	|
+	|
+	V
+  AWS STS
+  
+
+eksctl utils associate-iam-oidc-provider --region ap-south-1 --cluster ekswithavinash --approve
+
+kubectl get sa
+
+eksctl create iamserviceaccount --name s3-access-sa --namespace default --cluster ekswithavinash --region ap-south-1 --attach-policy-arn arn:aws:iam::aws:policy/AmazonS3FullAccess --approve --override-existing-serviceaccounts
+
+
+====================
+
+
+We have 3 types of scalings in K8s
+
+1. HPA : Horizantal Pod Autoscaler : Based on existing app pods CPU/Memory, Pod count will increase / decrease.. 
+2. VPA : Virtical Pod Autoscaler : VPA Adjust the existng POd's CPU/Memory. THis may required po to restart so, we dont prefer this for production environments. 
+3. Cluster AutoScaler : 
+
+kubectl autoscale deployment php-apache --cpu=60% --min=1 --max=10
+
+kubectl patch hpa php-apache --type='json' -p='[{"op": "replace", "path": "/spec/maxReplicas", "value": 20}]'
+
+
+--
+
+To increase the load on php-apache deployment pods, we can run a container to add load
+
+kubectl run -i --tty load-generator --rm --image=busybox:1.28 --restart=Never -- /bin/sh -c "while sleep 0.01; do wget -q -O- http://php-apache; done"
+
+kubectl get hpa php-apache --watch
+kubectl get hpa php-apache --w
+kubectl get pods -w
+
+=========================
+
+Cluster Auto Scaler : 
+
+We can adjust the instances count based on the pod count. 
+
+Pre-Req: Add below polocies to IAM role attached to nodes.
+1. ekscomputepolicy
+2. autoscaling group full access
+
+Also, Adjust the Max instance count at AutoScaling Group. 
+
+
+helm repo add autoscaler https://kubernetes.github.io/autoscaler
+
+helm install cluster-autoscaler autoscaler/cluster-autoscaler \
+  --namespace kube-system \
+  --set autoDiscovery.clusterName=ekswithavinash \
+  --set awsRegion=ap-south-1 \
+  --set extraArgs.balance-similar-node-groups=true \
+  --set extraArgs.skip-nodes-with-system-pods=false
+
+
+extraArgs.balance-similar-node-groups: true		: Distribute workload across similar node types
+extraArgs.skip-nodes-with-system-pods=false		: Delete the node even if it is running system pods
+
+** Delete the HPA before scaling, to not to get conflict.
+
+kubectl scale deployment php-apache --replicas=10 
+
+========
+
+VPA : 
+
+We dont use HPA and VPA side by side, it can cause "The "Autoscaling Death Spiral" Loop".
+
+We have 4 types of update options in VPA:
+
+off : Only shows thr suggestions, it does not apply.
+Initial : Applies recommendations only during the pod creation. Running pods are never touched/modified.
+InPlaceorRecreate : Attempt to resize cpu/memory on the fly without restarting the pod. Falls bacm to eviction if node capacity or runtime limit prevent it.
+Recreate : Actively evicts healthy running pods to force the resource update. 
+
+
+git clone https://github.com/kubernetes/autoscaler.git
+
+cd autoscaler/vertical-pod-autoscaler
+./hack/vpa-up.sh
+
+--> kubectl get pods -n kube-system				(You should able to see 3 pods for VPA)
+
+then apply vpa
+
+==============
+
+
+helm repo add fairwinds-stable https://charts.fairwinds.com/stable
+helm repo update
+
+kubectl create ns goldilocks
+
+helm install goldilocks --namespace goldilocks fairwinds-stable/goldilocks
+
+
+kubectl label ns default goldilocks.fairwinds.com/enabled=true
+kubectl label ns goldilocks goldilocks.fairwinds.com/enabled=true
+kubectl label ns <namespace> goldilocks.fairwinds.com/enabled=true
+
+kubectl -n goldilocks port-forward svc/goldilocks-dashboard 8080:80
+
+
+QoS : Quality of Service
+
+Guaranteed QoS : Every container must have CPU & Memory requests exactly equal to limits.
+
+
+
+
+
 
 
 
