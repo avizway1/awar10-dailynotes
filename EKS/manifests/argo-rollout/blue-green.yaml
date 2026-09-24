@@ -1,0 +1,72 @@
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: demo-bg-active          # ← the live ELB. Give this DNS to users.
+spec:
+  type: LoadBalancer
+  selector:
+    app: demo-bg                # ← controller appends the pod-template-hash
+  ports:
+    - port: 80
+      targetPort: 5000
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: demo-bg-preview         # ← test the green version here before promoting
+spec:
+  type: LoadBalancer
+  selector:
+    app: demo-bg                # ← same base selector, different hash
+  ports:
+    - port: 80
+      targetPort: 5000
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: demo-bg-rollout
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: demo-bg
+  template:
+    metadata:
+      labels:
+        app: demo-bg
+    spec:
+      containers:
+        - name: app
+          image: avizway/app:v1
+          ports:
+            - containerPort: 5000
+          env:
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+
+  strategy:
+    blueGreen:
+      activeService: demo-bg-active
+      previewService: demo-bg-preview
+
+      # false = you promote manually after eyeballing the preview ELB.
+      # true  = auto-promote as soon as green pods are Ready.
+      autoPromotionEnabled: false
+
+      # Keep the old (blue) ReplicaSet alive for 5 min after the switch,
+      # so an abort is an instant flip back instead of a re-deploy.
+      scaleDownDelaySeconds: 300
+
+      # Run green at full 4 replicas while it sits in preview.
+      # Drop to 1 if you only want a smoke test and want to save nodes.
+      previewReplicaCount: 4

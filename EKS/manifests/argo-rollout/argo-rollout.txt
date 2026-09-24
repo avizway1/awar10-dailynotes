@@ -1,0 +1,115 @@
+1) Install Argo Rollouts controller into your EKS cluster
+
+kubectl create namespace argo-rollouts
+    
+kubectl apply --server-side -n argo-rollouts -f https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml
+  
+
+Verify the controller is running:
+
+kubectl -n argo-rollouts get pods
+kubectl get crd | grep rollouts
+
+---
+
+2) Install the kubectl-argo-rollouts plugin (macOS)
+
+brew install argoproj/tap/kubectl-argo-rollouts
+
+---
+
+kubectl argo rollouts dashboard
+
+# opens UI at http://localhost:3100
+
+
+=======
+
+kubectl apply -f aws-rollout.yaml
+
+verify the status in localhost page..
+
+Verify the status..
+kubectl argo rollouts get rollout demo-rollout --watch
+
+
+update the nginx to new version...
+kubectl argo rollouts set image demo-rollout demo=nginx:1.25.2
+
+
+kubectl argo rollouts set image demo-rolling-rollout demo=nginx:1.25.2
+
+
+
+
+Promote early : kubectl argo rollouts promote demo-rollout
+
+rollback manually : kubectl argo rollouts abort demo-rollout
+
+
+
+=======
+
+CANARY WITH LOADBALANCER (no ingress) -- 05-canary-lb.yaml
+
+kubectl apply -f 05-canary-lb.yaml
+
+get the ELB dns name:
+kubectl get svc demo-canary-svc -w
+
+watch the rollout:
+kubectl argo rollouts get rollout demo-rollout --watch
+
+trigger the canary:
+kubectl argo rollouts set image demo-rollout app=avizway/app:canary
+
+hit the LB in a loop to see the split (should be ~1 in 4 at step 1):
+while true; do curl -s http://<ELB-DNS>/ ; sleep 0.5; done
+
+promote / abort:
+kubectl argo rollouts promote demo-rollout
+kubectl argo rollouts abort demo-rollout
+
+NOTE: without trafficRouting the weight is by POD COUNT, not by request %.
+      keep replicas divisible by the setWeight steps (4 replicas -> 25/50/75/100).
+
+=======
+
+BLUE-GREEN WITH LOADBALANCER (no ingress) -- 03-blue-green.yaml
+
+kubectl apply -f 03-blue-green.yaml
+
+get BOTH ELB dns names (active = live, preview = your test URL):
+kubectl get svc demo-bg-active demo-bg-preview -w
+
+watch the rollout:
+kubectl argo rollouts get rollout demo-bg-rollout --watch
+
+at this point both services point at the SAME (blue) pods.
+
+trigger the green version:
+kubectl argo rollouts set image demo-bg-rollout app=avizway/app:green
+
+now the controller brings up a full green ReplicaSet and points ONLY the
+preview service at it. rollout pauses at "Paused - BlueGreenPause".
+
+verify the split before promoting:
+curl -s http://<ACTIVE-ELB-DNS>/    # still blue
+curl -s http://<PREVIEW-ELB-DNS>/   # green
+
+promote (instant cutover, active flips to green):
+kubectl argo rollouts promote demo-bg-rollout
+
+abort (preview drops back to blue, active never moved):
+kubectl argo rollouts abort demo-bg-rollout
+
+undo AFTER a promote — works only inside scaleDownDelaySeconds (300s here,
+blue RS is still alive so the flip back is instant):
+kubectl argo rollouts undo demo-bg-rollout
+
+NOTE: blue-green is an INSTANT cutover — no setWeight, no partial split.
+      you are paying for 2x pods (blue + green) for the whole preview window,
+      plus 2 ELBs. in prod make the preview svc ClusterIP or an internal LB.
+      autoPromotionEnabled: false is what makes it wait for you.
+
+=======

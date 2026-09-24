@@ -1,0 +1,67 @@
+# ── Canary with Argo Rollouts — LoadBalancer (no Ingress/ALB) ──
+#
+# No trafficRouting block => weights are approximated by POD COUNT.
+# One Service fronts both stable and canary pods; the Rollout scales
+# the new ReplicaSet up as each setWeight step is reached.
+#
+# replicas: 4  ->  setWeight 25 = 1 canary pod
+#                  setWeight 50 = 2 canary pods
+#                  setWeight 75 = 3 canary pods
+#                  setWeight 100 = full promotion
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: demo-canary-svc
+spec:
+  type: LoadBalancer
+  selector:
+    app: demo            # ← matches BOTH stable and canary pods
+  ports:
+    - port: 80
+      targetPort: 5000
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: demo-rollout
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: demo
+  template:
+    metadata:
+      labels:
+        app: demo
+    spec:
+      containers:
+        - name: app
+          image: avizway/app:v2
+          ports:
+            - containerPort: 5000
+          env:
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+
+  strategy:
+    canary:
+      # NOTE: no stableService / canaryService / trafficRouting.
+      # Those only apply when an ingress or service mesh does the splitting.
+      maxSurge: 2
+      maxUnavailable: 0
+      steps:
+        - setWeight: 25
+        - pause: { duration: "2m" }
+        - setWeight: 50
+        - pause: { duration: "2m" }
+        - setWeight: 75
+        - pause: { duration: "2m" }
+        - setWeight: 100

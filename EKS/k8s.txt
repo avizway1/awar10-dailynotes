@@ -746,17 +746,55 @@ QoS : Quality of Service
 
 Guaranteed QoS : Every container must have CPU & Memory requests exactly equal to limits.
 
+==============================
+
+Deployment Methods: 
+
+docker pull avizway/app:v1
+docker pull avizway/app:v2
+docker pull avizway/app:v3
+docker pull avizway/app:canary
+docker pull avizway/app:green
+docker pull avizway/app:blue
 
 
+Rolling Update : Assume, you are upgrading 4 servers.. Instead of shutting down all of them, You upgrade only 1 at a time. Users may always hit 3 healthy servers, User dont notice any downtime. 
+--> We can configure MaxSurge and MaxUnavailbale
 
 
+kubectl rollout status deployment/demo-app
 
+kubectl rollout history deployment/demo-app
 
+kubectl rollout undo deployment/demo-app
 
+kubectl rollout undo deployment/demo-app --to-revision=1
 
+kubectl rollout restart deployment/demo-app
 
+----
 
+Recreate Deployment: 
 
+The entire old version is shutdown first, then the new version starts. 
+
+----
+Blue Green : 
+
+blue = Current version
+green = new version
+
+We can switch from blue to green at service level by changing the label.
+
+kubectl patch svc demo-bg-svc -p '{"spec":{selector"}:{"version":"green"}}'
+
+----
+
+Canary Deployment : named after "Canary in a coal Mine".. Send small traffic first, then increase gradually.
+
+----
+
+ArgoRollouts: 
 
 
 
