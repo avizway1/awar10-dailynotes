@@ -796,6 +796,124 @@ Canary Deployment : named after "Canary in a coal Mine".. Send small traffic fir
 
 ArgoRollouts: 
 
+===================================================================================================
+
+D: 25/09/2026
+
+Node Affinity : Node affinity option helps us to control where our pod should run. This selection happens based on node labels. 
+
+kubectl get nodes
+kubectl get nodes --show-labels
+kubectl get nodes --show-labels
+kubectl describe nodes <node-name>
+
+
+ip-192-168-44-111.ap-south-1.compute.internal   ==> Unlabelled
+ip-192-168-6-217.ap-south-1.compute.internal    ==> Labelled
+
+To add label : 
+kubectl label nodes ip-192-168-6-217.ap-south-1.compute.internal disktype=ssd
+
+To Remove Label : 
+kubectl label nodes ip-192-168-6-217.ap-south-1.compute.internal disktype-
+
+Remove label (disktype) from all Nodes: 
+kubectl label nodes --all disktype-
+
+----
+Strict Requirement:  requiredDuringSchedulingIgnoredDuringExecution 
+requiredDuringScheduling: Pod must run on a matching node only. If a match label is not found it stays pending. 
+----
+Soft Requirement: 
+preferredDuringScheduling: Pod looks for matching labelled nodes. It will run even if no node has the mentioned label. 
+
+
+IgnoredDuringExecution : once a pod is successfully running on a node, Kubernetes will not continuously re-evaluate the specific rule against the node. If someone removes or modifies the label on the node when the pod is actively running, Kubernetes will not evict or terminate the pod. The pod will safely continue running until it finishes its work or is manually deleted. 
+
+=======================
+
+pod affinity : Pods stick together on same node. 
+This helps whenever we need ultra-low latency between multiple pods. 
+
+pod anti-affinity : pods cannot run on the same node. 
+This helps with high availability. 
+
+=======================
+
+Taint : NODE : This is a special seat with "RESERVED" option.
+Tolaration : POD : The "PASS" to get the reserved seat.
+
+NoSchedule : New pods won't be scheduled here.
+PreferNoSchedule : kubernetes avoids scheduling a workload here but it is a soft rule. 
+
+
+Step 1 : add a label to a node so we can force our pod to run on that specific node using the node selector option. 
+kubectl label nodes ip-192-168-6-217.ap-south-1.compute.internal disktype=ssd
+
+Step 2 : taint the same node. 
+kubectl taint nodes ip-192-168-6-217.ap-south-1.compute.internal role=db:NoSchedule
+
+kubectl describe nodes ip-192-168-6-217.ap-south-1.compute.internal
+
+Untaint a Node:
+kubectl taint nodes ip-192-168-6-217.ap-south-1.compute.internal role=db:NoSchedule-
+
+============================================================================
+
+Node Drain : the node drain operation evicts all pods from a node gracefully. This is commonly used for:
+1. node maintenance
+2. decommissioning a node
+3. cluster upgrade
+
+Flags:
+--ignore-daemonsets	: Skip daemonset pods that actually run on every node. 
+--delete-emptydir-data : delayed pods that are using empty directory volumes.
+--timeout=120s : Fail if the drain takes longer than 60 seconds.
+
+When we are performing node drain, three things happen:
+1. The node is marked as scheduling disabled (cordoned).
+2. No new pods will be scheduled on this node.
+3. Existing pods are evicted and rescheduled on other nodes.
+
+
+kubectl describe nodes ip-192-168-6-217.ap-south-1.compute.internal
+
+--> Take a sample deployment with 2 pods and deploy.. Then perform the drain.. 
+
+kubectl drain ip-192-168-6-217.ap-south-1.compute.internal --ignore-daemonsets --delete-emptydir-data --timeout=120s --force
+
+kubectl uncordon ip-192-168-6-217.ap-south-1.compute.internal
+
+--> Our workload is not going to redistribute or rebalance across the multiple nodes if any node is unquarantined. We can run the `kubectl rollout restart` command to redistribute our workload across multiple nodes. 
+
+kubectl rollout restart deployment mynginx
+
+===============
+
+PDB : Pod disruption budget
+
+PDB will ensure the minimum number of pods stays running during voluntary disruptions. 
+PDB protects the application from becoming unavailable during maintenance activities. 
+PDB applies only to voluntary disruptions. 
+
+VOLUNTARY DISRUPTION: Node drain, cluster upgrade, scale down
+INVOLUNTARY DISRUPTION: Node Crash, Hardware failure, kernel panic
+
+==================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

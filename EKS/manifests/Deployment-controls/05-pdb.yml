@@ -1,14 +1,3 @@
-# POD DISRUPTION BUDGET (PDB) DEMONSTRATION
-#
-# WHAT IS PDB?
-# - Ensures minimum number of pods stay running during voluntary disruptions
-# - Protects applications from becoming unavailable during maintenance
-# - Only applies to VOLUNTARY disruptions (not node failures or crashes)
-#
-# VOLUNTARY DISRUPTIONS: Node drain, cluster upgrade, scaling down
-# INVOLUNTARY DISRUPTIONS: Node crash, hardware failure, kernel panic
-
----
 # STEP 1: Create a deployment with multiple replicas
 apiVersion: apps/v1
 kind: Deployment
@@ -17,7 +6,7 @@ metadata:
   labels:
     app: web-app
 spec:
-  replicas: 5  # We want 5 pods running
+  replicas: 7  # We want 5 pods running
   selector:
     matchLabels:
       app: web-app
@@ -49,10 +38,10 @@ spec:
       app: web-app  # Must match deployment labels
   
   # OPTION 1: Minimum available pods (choose one option)
-  minAvailable: 3  # Always keep at least 3 pods running
+  # minAvailable: 3  # Always keep at least 3 pods running
   
   # OPTION 2: Maximum unavailable pods (alternative to minAvailable)
-  # maxUnavailable: 2  # Allow maximum 2 pods to be down
+  maxUnavailable: 2  # Allow maximum 2 pods to be down
   # maxUnavailable: "40%"  # Allow 40% of pods to be unavailable
 
 # HOW IT WORKS:
