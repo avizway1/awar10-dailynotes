@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: backend
+        image: hashicorp/http-echo   # just replies with a message
+        args:
+        - "-text=Hello from BACKEND"
+        - "-listen=:5678"
+        ports:
+        - containerPort: 5678
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend          #THIS name becomes the DNS name
+spec:
+  selector:
+    app: backend         #points to the backend pods
+  ports:
+  - port: 80             # service listens here
+    targetPort: 5678     # forwards to container's port
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: curlimages/curl
+        command: ["sleep", "3600"]   # keep pod alive so we can test
+
+#kubectl exec -it <frontend-pod> -- sh
+# curl http://backend
+# curl http://backend.default.svc.cluster.local
+# kubectl exec -it myfirstpod -- sh

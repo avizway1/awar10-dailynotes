@@ -902,6 +902,113 @@ INVOLUNTARY DISRUPTION: Node Crash, Hardware failure, kernel panic
 ==================
 
 
+1. STARTUP PROBE: Checks if container has started successfully.
+2. READINESS PROBE: Checks if container is ready to receive traffic
+3. LIVENESS PROBE: Checks if container is still running healthy
+
+
+We always configure the startup probe first. Without the container starting how will the container take traffic? 
+
+STARTUP PROBE:
+--> It protects slow-starting containers from being killed by a liveness probe. 
+
+
+===================
+
+kubectl exec -it frontend-5cfd995957-f9xkh -- sh
+~ $ curl http://backend
+
+http://<service-name>
+http://<service-name>.<namespace>.svc.cluster.local
+curl http://backend.default.svc.cluster.local
+
+
+==================
+
+eksctl create cluster --name ekswithavinash-uat --version 1.35 --region ap-south-1 --zones=ap-south-1a,ap-south-1b --nodegroup-name myeksnodes --nodes 1 --node-type c7i-flex.large --node-ami-family=AmazonLinux2023 --managed
+
+
+cluster 1 : ekswithavinash
+cluster 2 : ekswithavinash-uat
+
+kubectl configuration location: ~/.kube/config
+
+kubectl config get-contexts
+
+aws eks update-kubeconfig --region ap-south-1 --name ekswithavinash --alias dev-cluster
+aws eks update-kubeconfig --region ap-south-1 --name ekswithavinash-uat --alias uat-cluster
+
+
+kubectl --context=dev-cluster get pods			--> picks dev-cluster context and shows the pods
+kubectl --context=uat-cluster get pods			--> picks uat-cluster context and shows the pods
+kubectl get svc --context=dev-cluster
+
+kubectl config use-context dev-cluster			--> Switch context to dev cluster. No need to pass --context
+kubectl config use-context uat-cluster			--> Switch context to uat cluster.
+
+
+kubectl config set-context uat-cluster --namespace=myapp		--> Set default namespace for our context
+
+kubectl config view
+kubectl config view --raw
+
+====================================
+
+If you want to get connected to an existing EKS cluster from a brand-new instance or laptop, you need the below tools:
+1. EKSCTL
+2. KubeCTL
+3. AWS CLI
+
+now update the kubeconfig
+
+aws eks update-kubeconfig --region ap-south-1 --name ekswithavinash --alias dev-cluster
+
+
+EKS has authentication modes:
+- EKS API - Advanced
+- Configmap	- Old tradiitonal, AWS stopped supporting
+
+
+
+ec2 instance (role) / New User (CLI)
+	|
+	|_ Has an IAM Role attached / CLI configured
+				|
+				|_ Is that IAM role/cli has EKS Permissions (Basic Describe permisisons)
+							|
+							|_ Is that IAM Role/User Mapped Inside EKS RBAC 
+											|
+											|_ kubectl start works here.
+
+
+---
+
+eks cluster-admin can perform below operations
+
+- Viewing all pods
+- Creating or deleting pods
+- Creating namespaces
+- Access all namespaces
+- Managing nodes
+- Managing secrets
+- Full control of everything
+
+eks admin policy : Everything same as cluster admin, but no node management..
+
+---
+
+kubectl auth can-i get pods
+kubectl auth can-i create pods
+kubectl auth can-i create deployments
+
+----
+
+
+https://github.com/googlecloudplatform/kubectl-ai
+
+
+
+
 
 
 
