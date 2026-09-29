@@ -1,0 +1,168 @@
+
+Without ISTIO:
+- Any microservice can talk to other microservices directly. 
+- No visibility into who is talking to whom.
+- no control over encryption or traffic rules. 
+
+
+With ISTIO : 
+- Every service gets a sidecar container. Technically we call it an Envoy proxy. 
+- This will be automatically injected. All traffic flow goes through this proxy only. 
+- 
+
+
+North-South Traffic : It acts as a front door and back door of our application. 
+- Whatever client request comes from the outside world, it will be picked. 
+- We have a lot of options like ingress controllers and Kubernetes services, like NodePort and load balancer. These components take the traffic from the outside world from the clients and send traffic to Kubernetes cluster's internal workloads. 
+
+East-West Traffic : East-west traffic represents internal service-to-service communication. East-west traffic typically forms the vast majority of total network data inside a cluster. 
+
+- It will be managed by CNI (container network interfaces).
+- Pods do not directly communicate with other pods.
+- Pods will use services like a cluster IP primarily to communicate with other services. 
+
+
+---
+
+1. istiod / Control Plane : this is the brain of Istio. It has multiple components like a pilot - traffic rules, citadel - certificates, and galley - configuration validation. 
+2. Side care container / Envoy proxy
+3. mTLS / peer authentication :
+	3.1 STRICT : only mTLS is accepted. Any plain HTTP request will be rejected. 
+	3.2 PERMISSIVE : accepts plain HTTP request as well as MTLS request.  (Default)
+4. Gateway : gateway manages inbound traffic from outside of the cluster, similar to an ingress controller or load balancer, and it works with the Kubernetes Gateway API. 
+
+
+---
+
+Install istioctl in your laptop.
+
+https://istio.io/latest/docs/setup/getting-started/
+
+https://istio.io/latest/docs/setup/getting-started/#download
+
+Download the latest version:
+
+curl -L https://istio.io/downloadIstio | sh -
+
+cd istio-1.30.3/
+
+export PATH=$PWD/bin:$PATH
+
+---
+
+After installing istioctl, create a pod and observe how many cotnainers are creating along with our workload.
+ 1/1
+ 
+============
+
+Inside the downlaoded location (istio-1.30.3) run : 
+istioctl install -f samples/bookinfo/demo-profile-no-gateways.yaml -y
+
+--
+
+Add a label to required namespaces: 
+
+kubectl label namespace default istio-injection=enabled
+
+---
+
+after adding label, am creating another pod
+
+kubectl run nginx --image=nginx:latest --port=80
+
+
+=================
+
+kubectl get crd gateways.gateway.networking.k8s.io &> /dev/null || \
+{ kubectl kustomize "github.com/kubernetes-sigs/gateway-api/config/crd?ref=v1.5.1" | kubectl apply -f -; }
+
+
+===============
+
+Deploy the sample application
+
+
+kubectl apply -f samples/bookinfo/platform/kube/bookinfo.yaml
+
+kubectl get services
+kubectl get pods
+
+kubectl exec "$(kubectl get pod -l app=ratings -o jsonpath='{.items[0].metadata.name}')" -c ratings -- curl -sS productpage:9080/productpage | grep -o "<title>.*</title>"
+
+
+expected output: <title>Simple Bookstore App</title>
+
+===============
+
+kubectl apply -f samples/bookinfo/gateway-api/bookinfo-gateway.yaml
+
+kubectl annotate gateway bookinfo-gateway networking.istio.io/service-type=ClusterIP --namespace=default
+
+kubectl port-forward svc/bookinfo-gateway-istio 8080:80
+
+
+http://localhost:8080/productpage
+
+=============
+
+
+kubectl run curl-naked -n default --image=curlimages/curl:8.21.0 --annotations='sidecar.istio.io/inject=false' -- sleep 3600
+
+kubectl exec -n default -it curl-naked -- curl -v http://productpage:9080/productpage
+
+----
+
+if mTLS is Permissive --> No hard check on mutual TLS so plain traffic also will be delivered. 
+
+---
+
+Apply peerAuthentication with strict mTLS
+
+
+=======
+
+kubectl run curl-naked2 -n default --image=curlimages/curl:8.21.0 -- sleep 3600
+
+
+kubectl exec -n default -it curl-naked2 -- curl -v http://productpage:9080/productpage
+
+
+======
+
+kubectl apply -f samples/addons
+
+kubectl apply -f samples/addons/kiali.yaml
+kubectl rollout status deployment/kiali -n istio-system
+
+kubectl rollout restart deployment/kiali -n istio-system
+
+istioctl dashboard kiali
+
+for i in $(seq 1 100); do curl -s -o /dev/null "http://bookinfo-gateway-istio.default.svc.cluster.local/productpage"; done
+
+
+======
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

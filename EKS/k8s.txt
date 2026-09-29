@@ -1003,23 +1003,65 @@ kubectl auth can-i create deployments
 
 ----
 
-
 https://github.com/googlecloudplatform/kubectl-ai
 
+======================================================================
+
+ISTIO --> Refer istio.txt file
+
+======================================================================
+
+Can i run K8s in my local laptop / an ec2 instance.
+
+Ans : YES, We can use minikube.. MiniKube is purely for a dev environment or testing purposes or lab environments only, not designed for a production workload. 
 
 
+Step 1 : Install kubectl 
+
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+
+sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+
+Step 2 : Install Docker, minikube run as container - K8s run as contianer
+
+sudo dnf install docker -y
+sudo systemctl enable docker --now
+sudo usermod -aG docker ec2-user
+newgrp docker
+
+Step 3: Install minikube
+
+curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+sudo install minikube-linux-amd64 /usr/local/bin/minikube
 
 
+minikube version
+
+minikube start --driver=docker
+minikube start --driver=docker --cpu=2 --memory=2048 --disk-size=10g
+
+minikube config set driver docker
+
+minikube status
+minikube stop
+minikube start
+minikube delete
+minikube logs
 
 
+create a deployment and servoce in minikube, then we can perform port-forward to access it.
 
+kubectl port-forward --address 0.0.0.0 svc/cip-service 8080:80 -n default
 
+----
 
+minikube dashboard
 
+kubectl proxy --address='0.0.0.0' --disable-filter=true
 
+http://3.109.139.249:8001/api/v1/namespaces/kubernetes-dashboard/services/http:kubernetes-dashboard:/proxy/
 
-
-
+Open port 8001 at Security group level.. 
 
 
 
