@@ -1,0 +1,69 @@
+
+
+ClusterIP : Works only Internally. We cant expose our application to putside world. Service to service communication internally.
+
+NodePort : need to expose random port on Nodes. Not production friendly.
+
+LoadBalancer : Create one load balancer per service. Cost will increase and maintenance will be difficult.
+
+Ingress : One Application load balancer can route traffic to many service.
+
+Internet
+	|
+	|
+	V
+LoadBalancer
+	|
+	|_ /api		(api service)
+	|
+	|_ /web		(web service)
+	|
+	|_ app.example.com	
+	
+
+Ingress Resources : It defines routing rules, specifically how external traffic reaches the service (for example, path-based, host-based, or SSL terminations). 
+
+Ingress Controller : The actual implementation that processes ingress rules and provides the underlying AWS application load balancer or network load balancer 
+
+
+Step 1 : use the shared "iam_policy.json" document and create an IAM Policy in your aws account. Name the policy as "AWSLoadBalancerControllerIAMPolicy"
+
+aws iam create-policy --policy-name AWSLoadBalancerControllerIAMPolicy --policy-document file://iam_policy.json
+
+Grab the Policy ARN: 
+arn:aws:iam::992189742322:policy/AWSLoadBalancerControllerIAMPolicy
+
+Step 2 : Approve OIDC provider and create service account for getting permissions to creating resources in AWS env.
+
+eksctl utils associate-iam-oidc-provider --region ap-south-1 --cluster ekswithavinash --approve
+
+eksctl create iamserviceaccount --cluster ekswithavinash --namespace kube-system --name=aws-load-balancer-controller --attach-policy-arn=arn:aws:iam::992189742322:policy/AWSLoadBalancerControllerIAMPolicy --region ap-south-1 --override-existing-serviceaccounts --approve
+
+verify: 
+kubectl get sa -n kube-system
+kubectl describe sa aws-load-balancer-controller -n kube-system
+
+
+Step 3 : Add helm and update
+
+helm repo add eks http://aws.github.io/eks-charts
+helm repo update eks
+
+Step 4 : Install the added helm chart
+
+helm install aws-load-balancer-controller eks/aws-load-balancer-controller -n kube-system --set clusterName=ekswithavinash --set serviceAccount.create=false --set serviceAccount.name=aws-load-balancer-controller
+
+step 5 : Create a new service account for our applicaiton. Add DynamoDB permisisons to the sevrice account.
+
+eksctl create iamserviceaccount --cluster ekswithavinash --namespace default --name=ddb-access-sa --attach-policy-arn=arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess --region ap-south-1 --override-existing-serviceaccounts --approve
+
+
+Step 6 : 
+
+https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.2/guide/ingress/annotations/
+
+
+
+
+
+

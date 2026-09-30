@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aviz-app
+  namespace: default
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: aviz-app
+  template:
+    metadata:
+      labels:
+        app: aviz-app
+    spec:
+      serviceAccountName: ddb-access-sa    # IRSA — gives the pod DynamoDB access
+      containers:
+        - name: flask-app
+          image: python:3.12-slim
+          command: ["/bin/bash", "-c"]
+          args:
+            - pip install flask boto3 --quiet && python /app/app.py
+          ports:
+            - containerPort: 5000
+          env:
+            - name: DYNAMODB_TABLE
+              value: "aviz-students"
+            - name: AWS_DEFAULT_REGION
+              value: "ap-south-1"
+          volumeMounts:
+            - name: app-code
+              mountPath: /app
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 20   # wait for pip install to finish
+            periodSeconds: 5
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "300m"
+      volumes:
+        - name: app-code
+          configMap:
+            name: aviz-app-code

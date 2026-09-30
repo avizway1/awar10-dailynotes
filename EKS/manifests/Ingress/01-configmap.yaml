@@ -1,0 +1,186 @@
+#table : aviz-students
+#Part-key : StudentId
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aviz-app-code
+  namespace: default
+data:
+  app.py: |
+    from flask import Flask, request, redirect
+    import boto3, uuid, os
+    from datetime import datetime
+
+    app = Flask(__name__)
+    TABLE  = os.getenv("DYNAMODB_TABLE", "aviz-students")
+    REGION = os.getenv("AWS_DEFAULT_REGION", "ap-south-1")
+    ddb    = boto3.resource("dynamodb", region_name=REGION)
+    table  = ddb.Table(TABLE)
+
+    HTML = """<!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8"/>
+      <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+      <title>Aviz Academy - Student Registration</title>
+      <style>
+        *{{margin:0;padding:0;box-sizing:border-box}}
+        body{{font-family:Arial,sans-serif;background:#0A1628;color:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:2rem}}
+        .header{{text-align:center;margin-bottom:2rem}}
+        .logo{{color:#E8580A;letter-spacing:3px;font-weight:bold;font-size:0.9rem}}
+        .header h1{{font-size:1.8rem;margin:0.4rem 0}}
+        .header p{{color:#888;font-size:0.85rem;font-style:italic}}
+        .sub{{margin-top:0.3rem;color:#555;font-size:0.75rem}}
+        .container{{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;width:100%;max-width:900px}}
+        @media(max-width:700px){{.container{{grid-template-columns:1fr}}}}
+        .card{{background:#0F2040;border:1px solid #1e3a5f;border-radius:10px;padding:1.5rem}}
+        .card h2{{color:#E8580A;font-size:1rem;margin-bottom:1rem;border-bottom:1px solid #1e3a5f;padding-bottom:0.5rem}}
+        label{{display:block;font-size:0.8rem;color:#aaa;margin-bottom:0.3rem;margin-top:0.8rem}}
+        input,select{{width:100%;background:#0A1628;border:1px solid #1e3a5f;color:#fff;padding:0.6rem 0.8rem;border-radius:6px;font-size:0.9rem}}
+        input:focus,select:focus{{outline:none;border-color:#E8580A}}
+        select option{{background:#0A1628}}
+        .btn{{margin-top:1.2rem;width:100%;background:#E8580A;color:#fff;border:none;padding:0.75rem;border-radius:6px;font-size:0.95rem;font-weight:bold;cursor:pointer}}
+        .btn:hover{{background:#c74a08}}
+        .flash{{padding:0.6rem 1rem;border-radius:6px;margin-bottom:1rem;font-size:0.85rem}}
+        .flash.ok{{background:#0d3320;border:1px solid #1a6b40;color:#4ade80}}
+        .flash.err{{background:#3a0d0d;border:1px solid #6b1a1a;color:#f87171}}
+        table{{width:100%;border-collapse:collapse;font-size:0.82rem}}
+        th{{color:#E8580A;text-align:left;padding:0.5rem 0.4rem;border-bottom:1px solid #1e3a5f;font-weight:600}}
+        td{{padding:0.45rem 0.4rem;border-bottom:1px solid #122040;color:#ccc;vertical-align:top}}
+        tr:last-child td{{border-bottom:none}}
+        .badge{{display:inline-block;background:#E8580A;color:#fff;border-radius:10px;padding:0.15rem 0.5rem;font-size:0.7rem;font-weight:bold}}
+        .empty{{color:#555;font-size:0.85rem;margin-top:1rem}}
+        .count{{float:right;color:#555;font-size:0.78rem;font-weight:normal;margin-top:2px}}
+        .footer{{margin-top:2rem;color:#444;font-size:0.78rem;text-align:center}}
+        .footer a{{color:#E8580A;text-decoration:none}}
+        .instructor{{display:flex;align-items:center;gap:12px;background:#162035;border:1px solid #1e3a5f;border-radius:10px;padding:0.75rem 1rem;margin-bottom:1rem;max-width:900px;width:100%}}
+        .avatar{{width:44px;height:44px;border-radius:50%;background:#E8580A;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:0.9rem;color:#fff;flex-shrink:0;letter-spacing:1px}}
+        .instructor-info strong{{color:#fff;display:block;font-size:0.95rem;margin-bottom:0.2rem}}
+        .instructor-info span{{color:#666;font-size:0.78rem}}
+        .badges-row{{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1.2rem;max-width:900px;width:100%}}
+        .pill{{background:transparent;border:1px solid #E8580A;color:#E8580A;border-radius:12px;padding:0.2rem 0.65rem;font-size:0.72rem}}
+        .pill.filled{{background:#E8580A;color:#fff}}
+      </style>
+    </head>
+    <body>
+      <div class="header">
+        <div class="logo">AVIZ ACADEMY</div>
+        <h1>Student Registration</h1>
+        <p>"Learn by Doing, Not Just Watching" &mdash; Avinash Reddy Thipparthi</p>
+        <p class="sub">EKS Pod &rarr; IRSA &rarr; DynamoDB ({table}) &nbsp;|&nbsp; Region: {region}</p>
+      </div>
+
+      <div class="instructor">
+        <div class="avatar">AR</div>
+        <div class="instructor-info">
+          <strong>Avinash Reddy Thipparthi</strong>
+          <span>AWS Community Builder &middot; Docker Captain &middot; 15 Years Industry Experience &middot; 9 Years Teaching AWS &amp; DevOps</span>
+        </div>
+      </div>
+
+      <div class="badges-row">
+        <span class="pill filled">7</span>
+        <span class="pill">AWS + DevSecOps</span>
+        <span class="pill">EKS</span>
+        <span class="pill">IRSA</span>
+        <span class="pill">ALB Ingress</span>
+        <span class="pill">DynamoDB</span>
+      </div>
+
+      <div class="container">
+        <div class="card">
+          <h2>Register a Student</h2>
+          {flash}
+          <form method="POST" action="/register">
+            <label>Full Name</label>
+            <input type="text" name="name" placeholder="e.g. Ravi Kumar" required/>
+            <label>Email</label>
+            <input type="email" name="email" placeholder="ravi@example.com" required/>
+            <label>Batch</label>
+            <select name="batch">
+              <option>Batch 10</option>
+              <option>Batch 9</option>
+              <option>Batch 8</option>
+            </select>
+            <label>Course</label>
+            <select name="course">
+              <option>AWS + DevSecOps</option>
+              <option>AWS Solutions Architect</option>
+              <option>Kubernetes and EKS</option>
+            </select>
+            <button type="submit" class="btn">Save to DynamoDB</button>
+          </form>
+        </div>
+
+        <div class="card">
+          <h2>Registered Students <span class="count">{count} records</span></h2>
+          {table_html}
+        </div>
+      </div>
+
+      <div class="footer">
+        <a href="https://avizacademy.com">avizacademy.com</a> &middot;
+        <a href="https://youtube.com/@avizway">YouTube @avizway</a> &middot;
+        <a href="https://github.com/avizway1">GitHub avizway1</a>
+      </div>
+    </body>
+    </html>"""
+
+    def fetch_students():
+        try:
+            items = table.scan().get("Items", [])
+            return sorted(items, key=lambda x: x.get("EnrolledAt", ""), reverse=True)
+        except Exception as e:
+            print(f"[ERR] scan failed: {e}")
+            return []
+
+    def render_table(students):
+        if not students:
+            return '<p class="empty">No records yet. Register the first student!</p>'
+        rows = "".join(
+            f"<tr><td><strong style='color:#fff'>{s.get('Name','')}</strong>"
+            f"<br><span style='color:#555;font-size:0.75rem'>{s.get('Email','')}</span></td>"
+            f"<td><span class='badge'>{s.get('Batch','')}</span></td>"
+            f"<td style='color:#888;font-size:0.75rem'>{s.get('EnrolledAt','')[:10]}</td></tr>"
+            for s in students
+        )
+        return (f"<table><thead><tr><th>Name</th><th>Batch</th><th>Date</th></tr></thead>"
+                f"<tbody>{rows}</tbody></table>")
+
+    @app.route("/", methods=["GET"])
+    def index():
+        msg = request.args.get("msg", "")
+        flash = ""
+        if msg == "ok":
+            flash = '<div class="flash ok">Student saved to DynamoDB!</div>'
+        elif msg == "err":
+            flash = '<div class="flash err">Error writing to DynamoDB. Check pod logs.</div>'
+        students = fetch_students()
+        return HTML.format(flash=flash, table_html=render_table(students),
+                           count=len(students), region=REGION, table=TABLE)
+
+    @app.route("/register", methods=["POST"])
+    def register():
+        try:
+            item = {
+                "StudentId" : str(uuid.uuid4())[:8],
+                "Name"      : request.form["name"],
+                "Email"     : request.form["email"],
+                "Batch"     : request.form["batch"],
+                "Course"    : request.form["course"],
+                "EnrolledAt": datetime.utcnow().isoformat()
+            }
+            table.put_item(Item=item)
+            print(f"[OK] Saved to DynamoDB: {item['Name']} ({item['StudentId']})")
+            return redirect("/?msg=ok")
+        except Exception as e:
+            print(f"[ERR] DynamoDB write failed: {e}")
+            return redirect("/?msg=err")
+
+    @app.route("/health")
+    def health():
+        return {"status": "ok"}, 200
+
+    if __name__ == "__main__":
+        app.run(host="0.0.0.0", port=5000)

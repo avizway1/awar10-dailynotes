@@ -1,0 +1,27 @@
+apiVersion: karpenter.sh/v1
+kind: NodePool
+metadata:
+  name: general-purpose
+spec:
+  template:
+    spec:
+      nodeClassRef:
+        group: eks.amazonaws.com
+        kind: NodeClass
+        name: default
+      requirements:
+        - key: karpenter.sh/capacity-type
+          operator: In
+          values: ["spot", "on-demand"]   # prefer Spot, fallback to On-Demand
+        - key: kubernetes.io/arch
+          operator: In
+          values: ["amd64"]
+        - key: eks.amazonaws.com/instance-category
+          operator: In
+          values: ["c", "m", "r"]         # compute, memory, memory-optimised families
+  disruption:
+    consolidationPolicy: WhenEmptyOrUnderutilized
+    consolidateAfter: 1m                  # terminate idle nodes after 1 minute
+  limits:
+    cpu: "1000"                           # max total CPU across all Auto Mode nodes
+    memory: "4000Gi"

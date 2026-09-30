@@ -1063,6 +1063,55 @@ http://3.109.139.249:8001/api/v1/namespaces/kubernetes-dashboard/services/http:k
 
 Open port 8001 at Security group level.. 
 
+============================================================
+
+EKS fargate: Serverless, No nodes to manage, Entire workload run as pod. 
+
+EKS fargate has some limitations: 
+- EKS Fargate uses the cold start. Because of cold start pod creation or pod scaling will take 30 to 90 seconds.
+- EKS Fargate does not support daemon sets.
+- We cannot use EBS with the Fargate method. If we want storage we can use EFS.
+- EKS Fargate workload supports a maximum of one individual pod with 16 vCPUs and 120 GB of memory only. It has a lot of non-compliant standards. EKS Fargate is not compatible with PCI/DSS, HIPAA, FedRAMP, and SOC2. 
+
+
+
+step 1 : create cluster
+
+eksctl create cluster --name ekswithavinash-fg --version 1.35 --fargate
+
+Step 2 : Create a fargate profile
+
+kubectl create ns myfgns
+eksctl create fargateprofile --cluster ekswithavinash-fg --name myfgprofile --namespace myfgns
+
+==============
+
+EKS AutoMode : this is a new option in AWS EKS. 
+- In regular EKS we have managed node group so we need to manage the nodes or the data plane. AWS manages the control plane. 
+- In AWS EKS auto mode AWS manages the control plane as well as the data plane. 
+
+Below are the advanatages of EKS Auto Mode: 
+- Compute auto-scaling is built-in. No need to explicitly configure cluster autoscaler.
+- Pods and service network are also built-in.
+- It can pick spot instances as well as on-demand instances, depending on our configuration.
+- Auto mode picks the right size configuration automatically.
+- We can configure a node pool with the required instance configuration, like on-demand or spot instances.
+
+karpenter : karpenter is a flexible high-performance open-source node autoscaler for Kubernetes built by AWS for EKS. It continuously watches for unscheduled pods, evaluates their resource requirements, and instantly provisions right-sized EC2 instances. This automatically reduces the cost and operational overhead compared to a traditional autoscaler. 
+
+Key benefits over CLuster Autoscaler: 
+- Fast launch times : Provisions compute capacity in seconds.
+- Instance flexibility : We can choose instances from wide range of types.
+- Native control : Uses k8s native custom resources like nodepool to manage configuration.
+
+--> EKS AutoMode clusters cost is very very cheap.
+
+=========
+
+
+
+
+
 
 
 
