@@ -1074,7 +1074,6 @@ EKS fargate has some limitations:
 - EKS Fargate workload supports a maximum of one individual pod with 16 vCPUs and 120 GB of memory only. It has a lot of non-compliant standards. EKS Fargate is not compatible with PCI/DSS, HIPAA, FedRAMP, and SOC2. 
 
 
-
 step 1 : create cluster
 
 eksctl create cluster --name ekswithavinash-fg --version 1.35 --fargate
@@ -1106,7 +1105,56 @@ Key benefits over CLuster Autoscaler:
 
 --> EKS AutoMode clusters cost is very very cheap.
 
-=========
+eksctl create cluster ekswithavinash-am --version 1.36 --region ap-south-1 --zones=ap-south-1a,ap-south-1b --enable-auto-mode
+
+
+===============================================================
+
+D: 01/10/2026
+
+We always enable control plane logging on our EKS cluster. 
+
+eks cluster --> o11y --> Control plane logs 
+
+API server : Logs pertaining to API requests to the cluster.
+Audit : Logs pertaining to cluster access via the Kubernetes API.
+Authenticator : Logs pertaining to authentication requests into the cluster.
+Controller manager : Logs pertaining to state of cluster controllers.
+Scheduler : Logs pertaining to scheduling decisions.
+
+----
+
+Observability : o11y
+
+Metrics : Numbers and Graphs : What is happening.?
+logs : Text records : Why is this happening.?
+Traces : Flow graph : Where did it break.?
+
+CloudWatch Agent is an AWS native monitoring, logging, and alerting (SNS) service. 
+
+Pre-Req: we have to add the 'CloudWatchAgentserverpolicy' to the EKS compute node's IAM Role.
+
+Install CW Agent Add-on
+
+aws eks create-addon --addon-name amazon-cloudwatch-observability --cluster-name ekswithavinash --region ap-south-1
+
+
+---
+
+amazon-cloudwatch-observability-controller-manager : brain of CW agent
+cloudwatch-agent : helps to get the node, pod, and container-level metrics 
+fluent-bit : it's a lightweight high-performance log processor. This runs as a daemon set (one pod per node). It collects logs from /var/log/containers on each node then it sends logs to CloudWatch Logs. 
+
+
+/aws/containerinsights/ekswithavinash/host 			--> system level logs at node
+/aws/containerinsights/ekswithavinash/dataplane		--> kubelet, kube-proxy, container-runtime
+/aws/containerinsights/ekswithavinash/application	--> stdout, stderr, consolelog(), ERROR, error, Exception
+/aws/containerinsights/ekswithavinash/performance	--> Performance logs
+
+
+
+
+
 
 
 
