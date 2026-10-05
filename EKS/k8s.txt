@@ -1151,6 +1151,52 @@ fluent-bit : it's a lightweight high-performance log processor. This runs as a d
 /aws/containerinsights/ekswithavinash/application	--> stdout, stderr, consolelog(), ERROR, error, Exception
 /aws/containerinsights/ekswithavinash/performance	--> Performance logs
 
+======================
+
+Prometheus : Its an Open source metric collection and alerting appliaiton.
+Grafana : Its also an open source visualisation and dashbpard creation service.
+
+DataStore : TSDB - Time Series Database.
+Query : PromQL to Query the Metrics.
+Pull Based : Prometheous pull the metrics from targets (pod/node)
+alert manager : Send alerts to email (twillo - paid) and slack (free)
+
+step 1 : Add helm repo and update
+
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+
+step 2 : Create a namespace 
+
+kubectl create namespace monitoring --dry-run=client -o yaml | kubectl apply -f -
+
+Step 3 : Enable OIDC and 
+
+CLUSTER=ekswithavinash
+REGION=ap-south-1
+eksctl utils associate-iam-oidc-provider --cluster $CLUSTER --region $REGION --approve
+
+Step 4 : Attach EBSCSI Driver polocy to EKS Nodes IAm Role and Enable ebs-csi driver.
+
+eksctl create addon --name aws-ebs-csi-driver --cluster $CLUSTER --region $REGION --force
+
+Step 5 : Add helm chart and install
+
+helm upgrade --install prometheus-stack prometheus-community/kube-prometheus-stack --namespace monitoring --values values.yaml
+
+kubectl get pods -n monitoring
+kubectl get svc -n monitoring
+
+
+Grafana: Grafana doesn't collect the data, It uses Prometheous or other data sources.
+--> It creates dashboards with graphs, charts and alerts.
+--> We have lot of data sources i.e; prometheous, cloudwatch, elesticsearch, mysql, loki
+
+New Relic
+DataDog
+Dynatrace
+site24x7
+middleware.io
 
 
 
