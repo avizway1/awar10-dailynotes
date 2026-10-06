@@ -1,0 +1,90 @@
+
+
+ArgoCD helps us to deploy our application into K8s. 
+
+--> It act as "single source of truth". 
+--> A git repo act as source of truth to deploy our application. If we manually deploying using kubectl apply, its hard to track who applied what changes.
+--> When using Argo, all manifest files has to push to git repo, argo will pick from there and deploy to k8s.
+
+1. Declarative 
+2. Versioned in Git
+3. Pulled automatically : An agent inside the cluster pull the changes. (PULL.. NOT PUSH)
+4. Continuosly reconciled : The agent keeps comapring and correcting. 
+
+PUSH based : Jenkins / Github Actions (jenkins/GHA --> EKS Cluster)
+PULL based : GitOps with ArgoCD (gitrepo  <--  ArgoCD inside EKS) - comapre and pull
+
+---
+
+ArgoCD Components: 
+
+argocd-server : The front desk. Serves Web UI, CLI. handles the login and RBAC.
+
+argocd-repo-server : Clones the git repo and turns it into plain YAML. 
+
+argocd-application-controller : The brain of Argo. It compares rendered YAML with live resources and applies the changes. 
+
+argocd-redis : Cache so git and cluster wont utilise its full resources for every refresh.
+
+dex-server : SSO broidge for github, okta, aws iam identity center
+
+applicationset-controller : Generates many applications from one template. 
+
+---
+
+Reconcilation loop : 
+
+Desired 			--> Compare	(diff)			-->  Live Objects
+(git - yaml)			every ~3 min			
+
+Difference : Runs sync command, new changes will apply to cluster
+
+
+Synced : cluster = git
+OutOfSync : cluster =/ git
+Unknown : cant read git or render
+
+aws eks update-kubeconfig --name ekswithavinash --region ap-south-1
+
+
+kubectl create namespace argocd
+
+kubectl apply -n argocd --server-side --force-conflicts -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+kubectl patch svc argocd-server -p '{"spec":{"type":"LoadBalancer"}}' -n argocd
+
+
+get initial password:
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+
+Tg6l3UWUJZK8iDi-
+
+
+
+prune resources : Argo will delete respurces of they are no l;onged defined in git.
+Self healing : Argo will force the state defined in git into the cluster, when a deviation in the cluster is detected.
+
+Sync Policy :
+--> Automatic : If checked, Application will automatically sync when changes are detected.
+--> Manual : Shows out of sync, we need to manually sync the changes.
+
+
+
+============
+
+Access argo using cli:
+
+argocd login <url> --username admin --insecure
+argocd account update-password
+
+
+
+
+
+
+
+
+
+
+
+

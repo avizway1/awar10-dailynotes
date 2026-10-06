@@ -1,0 +1,61 @@
+
+
+Github actions is a CICD platform build into Github. 
+
+SDLC : 
+plannin
+analysis
+design
+implementation
+testing & Integration
+Maintenance
+
+sandbox/training --> Dev --> QA --> UAT --> Prd
+
+Waterfall Methodology : 10 pages website.. We build all 10 poages and deliver 10 pages to client.. 
+
+Agile methodology : 10 pages website.. we take only 1 webpage at a time.. We involve client.. Reviews and feedback.. imprevements.. 
+
+Sprint planning : String goal, Sprint plan, Product backlog items.. 
+Daily Scrum : Daily 15 min meeting.. Developers progress towards spring goal.. nextday actionable plan..
+Sprint review : Sprint outcome.. Next sprint plan.. product backlog.. 
+Sprint Restrospective : Review backlogs items and plan to increase quality.. 
+
+DevOps Methodology: 
+Slow release cycle issues fixed
+Manual build process eliminated
+Early issue detection
+
+CI : Contineous integration
+CD : Contineous Delivery : After CI, These is a manual step involved to perform deployment.
+	 Contineous Deployment : After CI, Deloyment will happen automatically, No Manual action.
+
+GHA / GitHub Actions : GHA is a CICD platform build on github. This can track changes happening on our code and perform automated jobs i.e; build/test/deploy.
+
+--> It has native github integrations.
+--> YAMl Configuration
+--> Marketplace has lot of pre-build actions. This can save lot of hours.
+--> multi-os matrix : v1, v2,.. win os, ubuntu os, mac os
+--> Unlimited GHA runs for public repos.. Private: 2000 minutes/Month
+
+workflow
+event
+job
+step
+runner
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
