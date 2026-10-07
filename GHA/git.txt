@@ -44,9 +44,59 @@ job
 step
 runner
 
+======================
+
+D: 07/10/2026
 
 
+Workflow : A job to automate our process, We define process in a single YAML file. 
+File location should be : repo --> .github / workflows / abc.yaml
 
+---
+
+Event : An event is the trigger that starts our workflow.
+
+push 				: When any code changes pushed to repo.
+pull request		: When any PR is created
+schedule			: Run at specific time intervals using Cron
+workflow_dispatch	: Manually trigger by user
+
+---
+
+Job : A job contians multiple steps that runs to perform the required activity.
+One job can contains multiple steps.
+-> Single workflow can contians multiple jobs. 
+
+1. Identify secrets
+2. Verify code quality
+3. Send alerts
+4. print result
+
+Step : A single task inside a job
+
+---
+
+Runner : THis is a virtual machiene, that executes our jobs. These are microVMs (VM/Contianer)
+
+GitHub Hosted Runner : GH provide these.. (unlimited runs : public repo.. 2000 minutes : for Private repos)
+Self Hosted Runner : We can configure our server / ec2 to perform the job. As we providing machiene, we call it as self hosted runner.
+
+---
+
+Github actions: An action is a reusable piece of code that does a specific task. Instead of writing logs/jobs from scratch, we can use preconfigured actions.
+
+actions/checkout@v6				- Checks out our repository code
+gitleaks/gitleaks-action@v3		- Checks for secrets leaks
+
+
+=========
+
+GHA has 3 types of variables
+
+workflow variables: We can define in our YAML file itself					$VAR_NAME
+	--> JOB LEVEL, Workflow Level, Step Level
+Configuration variables: In github UI, Under settings, we can define		${{ vars.VAR_NAME }}
+Context Variables : Prebuild variables provided by GitHub					${{ github.VAR_NAME }}
 
 
 
