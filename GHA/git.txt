@@ -98,6 +98,98 @@ workflow variables: We can define in our YAML file itself					$VAR_NAME
 Configuration variables: In github UI, Under settings, we can define		${{ vars.VAR_NAME }}
 Context Variables : Prebuild variables provided by GitHub					${{ github.VAR_NAME }}
 
+===========================
+
+D: 08/10/2026
+
+
+Github Hosted Runner : GitHub itself will give us a VM. That VM runs our job. Once the job is done it destroys it immediately. 
+- We can run one single job for a maximum period of "6 hours" in a GitHub-hosted runner. 
+
+
+Self-Hosted Runner : we can set up our own server or instance. GitHub sends the job to that machine and then our machine will run the job. 
+- We can access our VPC resources or databases. 
+- We can choose our own H/W configurations and O/S configurations. 
+- We can have our preinstalled tools in the self-hosted runner based on our choice. 
+
+uname -m		(x86_64 - Linux X64   aarch64 --> ARM64)
+
+mkdir actions-runner && cd actions-runner
+
+curl -o actions-runner-linux-x64-2.337.0.tar.gz -L https://github.com/actions/runner/releases/download/v2.337.0/actions-runner-linux-x64-2.337.0.tar.gz
+
+tar xzf ./actions-runner-linux-x64-2.337.0.tar.gz
+
+
+sudo dnf install dotnet-sdk-8.0 -y
+
+
+./config.sh --url https://github.com/avizway1/awar10-ghademo --token ANWJJWNDEYJPMTFQAJHIGMLKY4QFA
+
+labels: 'self-hosted', 'Linux', 'X64', myrunner
+
+./run.sh
+
+---
+
+Installing svc.sh as a system service 
+sudo ./svc.sh install
+
+sudo ./svc.sh start
+sudo ./svc.sh status
+sudo ./svc.sh stop
+sudo ./svc.sh uninstall
+
+
+--------
+
+OIDC : openID Connect : This is a secure option compared to storing access keys and secret access keys. 
+
+Whenever we are using this OpenID connector, the GitHub configuration block has permissions so it actually uses secured authentication for our workflow with an external cloud provider without hardcoding the long-lived secrets. 
+
+ID Token write : the permission does not grant any ability to modify resources inside or outside. 
+
+1. GitHub issues JWT token
+2. Cloud Handshake
+3. identity verification happens
+
+----
+
+https://github.com/marketplace/actions/configure-aws-credentials-action-for-github-actions
+
+---
+
+step 1 : create an identity provider in our AAD + IM service. Choose provider type as OIDC and 
+
+Provider URL : https://token.actions.githubusercontent.com
+Audience: sts.amazonaws.com
+
+Step 2 : Create an IAM ROle for GHA.
+
+Choose : Web identity
+Identity provider: token.actions.githubusercontent.com
+GitHub organization: github-username: avizway1
+
+avizway1@57447641				--> Account Name/uniqueID
+awar10-ghademo@1408201488		--> Repo Name/UniqueID
+
+** While creating the IAM role if you add the unique ID of your username, it will throw an error. First create with only the username. Once the role has been created go to Trusted Relationships and modify it to add the unique ID next to your account username. 
+
+
+---
+
+permissions:
+  id-token: write
+  contents: read
+  
+- name: Configure AWS Credentials
+  uses: aws-actions/configure-aws-credentials@v6.3.0
+  with:
+  	aws-region: ap-south-1
+	role-to-assume: arn:aws:iam::992189742322:role/awar10-gha-role
+
+
+
 
 
 

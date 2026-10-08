@@ -110,7 +110,7 @@ Ekscluster creation using eksctl:
 
 pre-req: eksctl must be installed
 
-eksctl create cluster --name ekswithavinash2 --version 1.35 --region ap-south-1 --zones=ap-south-1a,ap-south-1b --nodegroup-name myeksnodes --nodes 2 --nodes-min 1 --nodes-max 4 --node-type c7i-flex.large --node-ami-family=AmazonLinux2023 --managed
+eksctl create cluster --name ekswithavinash --version 1.35 --region ap-south-1 --zones=ap-south-1a,ap-south-1b --nodegroup-name myeksnodes --nodes 2 --nodes-min 1 --nodes-max 4 --node-type c7i-flex.large --node-ami-family=AmazonLinux2023 --managed
 
 ---
 
@@ -188,6 +188,7 @@ kubectl get nodes
 OIDC : OpenID Connect : it is an open identity authentication protocol. This is actually built on top of the OAuth 2.0 framework. 
 
 Enable OIDC Provider on EKS CLuster to get permisisons inside the EKS cluster.
+
 
 eksctl utils associate-iam-oidc-provider --region ap-south-1 --cluster ekswithavinash --approve
 
@@ -1213,9 +1214,7 @@ daemonsets
 
 
 
+eksctl create cluster --name ekswithavinash --version 1.35 --region ap-south-1 --zones=ap-south-1a,ap-south-1b --nodegroup-name myeksnodes --nodes 2 --nodes-min 1 --nodes-max 4 --node-type m7i-flex.large --node-ami-family=AmazonLinux2023 --managed
 
 
-
-
-
-
+eksctl utils associate-iam-oidc-provider --region ap-south-1 --cluster ekswithavinash --approve
